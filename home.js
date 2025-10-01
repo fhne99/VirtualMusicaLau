@@ -1,4 +1,5 @@
 
+import MusicPlayer from "./player.js";
 const noteCount = document.querySelector('#noteCount');
 const noteCountBtn = document.querySelector('#noteCountBtn');
 const mp = new MusicPlayer();
@@ -6,16 +7,17 @@ const mp = new MusicPlayer();
 noteCountBtn.addEventListener('click', async() => {
     for (let i = 0; i < noteCount.value; i++) {
         const note = await getRandomNote();
+        console.log(note, i)
         mp.play(note, 1);
     }
-});
 
+});
 
 // Charger le fichier JSON
 async function loadNotes() {
   const response = await fetch("fichier.json");
   if (!response.ok) {
-    throw new Error("Erreur lors du chargement de notes.json");
+    throw new Error("Erreur lors du chargement de note.json");
   }
   return await response.json(); 
 }
@@ -27,10 +29,62 @@ const randomNbr = (max) => {
 
 async function getRandomNote() {
   const notesObj = await loadNotes();
-  const keys = Object.keys(notesObj); 
+  const keys = Object.keys(notesObj);
+console.log(randomNbr(keys.length));
+
+   
   const idx = randomNbr(keys.length); 
-  const note = keys[idx];            
-  const value = notesObj[note]; 
+  const note = keys[idx].toString();            
   
-  return { [note]: value }; 
+  return  note ; 
 }
+
+
+fetch("fichier.json")
+  .then((response) => response.json())
+  .then((notes) => {
+ 
+    // gammeReNoires.forEach(nom => setTimeout(() => mp.play(nom, 0.5), 500 * gammeReNoires.indexOf(nom)));
+  })
+  .catch((err) => {
+    console.error("Erreur lors du chargement ou du traitement du JSON :", err);
+  });
+
+// ...après la création de mp...
+Array.from(document.getElementsByClassName("blackButtons")).forEach((btn, i) => {
+  const notesNoires = [
+    "C#4",
+    "D#4",
+    "F#4",
+    "G#4",
+    "A#4",
+    "C#5",
+    "D#5",
+    "F#5",
+    "G#5",
+    "A#5",
+  ];
+  btn.addEventListener("click", () => {
+    mp.play(notesNoires[i], 1);
+  });
+});
+
+const importBtn = document.getElementById('importBtn');
+const fileInput = document.getElementById('fileInput');
+const message = document.getElementById('message');
+
+importBtn.addEventListener('click', () => {
+    fileInput.click();
+});
+
+fileInput.addEventListener('change', (event) => {
+    const file = event.target.files[0];
+    if (!file) return;
+
+    const reader = new FileReader();
+    reader.onload = function(e) {
+        const content = e.target.result;
+        message.textContent = "Fichier importé";
+    };
+    reader.readAsText(file);
+})

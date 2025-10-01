@@ -1,15 +1,93 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>VirtualMusicLau</title>
-</head>
-<body>
+    <style>
+      .piano {
+        display: flex;
+        position: relative;
+      }
+
+      .white-key {
+        width: 40px;       
+        height: 200px;     
+        background: white;
+        border: 1px solid black;
+        border-radius: 0 0 5px 5px;
+        box-shadow: 0 5px 5px rgba(0,0,0,0.3);
+        margin-right: 2px; 
+        position: relative;
+        z-index: 1;
+        cursor: pointer;
+      }
+    
+      .white-key:last-child {
+        margin-right: 0;
+      }
+    
+      .white-key:active {
+        background: #ccc;
+        box-shadow: inset 0 5px 5px rgba(0,0,0,0.3);
+      }
+    </style>
+  </head>
+  <body >
+    <div
+      style="display: flex; flex-direction: column; justify-self: space-between"
+    >
+      <div style="display: flex; flex-direction: row; justify-self: space-between">
+         <div>
+              <button class="blackButtons">Do#/Ré♭</button>
+              <button class="blackButtons">Ré#/Mi♭</button>
+              <button class="blackButtons">Fa#/Sol♭</button>
+              <button class="blackButtons">Sol#/La♭</button>
+              <button class="blackButtons">La#/Si♭</button>
+          </div>
+          <div>
+              <button class="blackButtons">Do#/Ré♭</button>
+              <button class="blackButtons">Ré#/Mi♭</button>
+              <button class="blackButtons">Fa#/Sol♭</button>
+              <button class="blackButtons">Sol#/La♭</button>
+              <button class="blackButtons">La#/Si♭</button>
+          </div>
+      </div> 
+    </div> 
+    <div class="piano">
+      <!-- 2 octaves = 14 touches blanches -->
+      <div class="white-key" >Do</div>
+      <div class="white-key" >Ré</div>
+      <div class="white-key" >Mi</div>
+      <div class="white-key" >Fa</div>
+      <div class="white-key" >Sol</div>
+      <div class="white-key" >La</div>
+      <div class="white-key" >Si</div>
+
+      <div class="white-key" >Do</div>
+      <div class="white-key" >Ré</div>
+      <div class="white-key" >Mi</div>
+      <div class="white-key" >Fa</div>
+      <div class="white-key" >Sol</div>
+      <div class="white-key" >La</div>
+      <div class="white-key" >Si</div>
+    </div> 
+  
+
     <h2>Générateur de séquence musicale</h2>
-    <label for="noteCount">Nombre de notes à jouer </label>
-    <input id="noteCount" name="noteCount" type="number" min="1" max="100">
-    <button id="noteCountBtn">Jouer</button>
-    <script type="module" src="script.js"></script>
-</body>
+    <div style="margin-bottom: 20px;">
+      <label for="noteCount">Nombre de notes à jouer </label>
+      <input id="noteCount" name="noteCount" type="number" min="1" max="100">
+      <button id="noteCountBtn">Jouer</button>
+    </div>
+  
+    <div>
+      <button id="importBtn">Importer une partition</button>
+      <input type="file" id="fileInput" accept=".txt" style="display:none">
+      <p id="message"></p>
+    </div>   
+
+    <script type="module" src="home.js"></script>
+  </body>
 </html>
+ 
