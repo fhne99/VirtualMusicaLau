@@ -9,9 +9,19 @@ fetch("fichier.json")
     const touchesNoires = Object.keys(notes).filter((nom) => nom.includes("#"));
 
     // Touches noires de la gamme de Do (octave 4)
-    const gammeDoNoires = ["C#4", "D#4", "F#4", "G#4", "A#4"];
+    const gammeDoNoires = [
+      "C#4",
+      "D#4",
+      "F#4",
+      "G#4",
+      "A#4",
+      "C#5",
+      "D#5",
+      "F#5",
+      "G#5",
+      "A#5",
+    ];
     // Touches noires de la gamme de Ré (octave 4)
-    const gammeReNoires = ["D#4", "F#4", "G#4", "A#4", "C#5"];
 
     // Exemple : jouer toutes les touches noires de la gamme de Do
     gammeDoNoires.forEach((nom) => {
@@ -27,7 +37,18 @@ fetch("fichier.json")
 
 // ...après la création de mp...
 document.querySelectorAll("button").forEach((btn, i) => {
-  const notesNoires = ["C#4", "D#4", "F#4", "G#4", "A#4"];
+  const notesNoires = [
+    "C#4",
+    "D#4",
+    "F#4",
+    "G#4",
+    "A#4",
+    "C#5",
+    "D#5",
+    "F#5",
+    "G#5",
+    "A#5",
+  ];
   btn.addEventListener("click", () => {
     mp.play(notesNoires[i], 1);
   });
