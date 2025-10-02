@@ -2,6 +2,8 @@ import MusicPlayer from "./player.js";
 const noteCount = document.querySelector("#noteCount");
 const noteCountBtn = document.querySelector("#noteCountBtn");
 const mp = new MusicPlayer();
+const tempoSelect = document.querySelector('#tempo');
+
 let notes = {};
 let tempo = 0;
 
@@ -20,9 +22,17 @@ noteCountBtn.addEventListener('click', async() => {
     }
 
     for (let i = 0; i < noteCount.value; i++) {
-    const note = await getRandomNote();
-    mp.play(note, tempo / 1000);
-    await new Promise(resolve => setTimeout(resolve, 500));
+      const note = await getRandomNote();
+      if (tempoSelect.value === 'random') {
+        const duration = tempo / 1000; 
+        mp.play(note, duration);
+        await new Promise((resolve) => setTimeout(resolve, tempo)); 
+      } else {
+        const fixedTempo = parseInt(tempoSelect.value);
+        const duration = fixedTempo / 1000;
+        mp.play(note, duration);
+        await new Promise((resolve) => setTimeout(resolve, fixedTempo));
+      }  
     }
   } else {
     if (!document.querySelector('#toManyNotesMsg')) {
