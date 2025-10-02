@@ -98,6 +98,75 @@ document.querySelectorAll(".white-key").forEach((key, i) => {
   });
 });
 
+//Assigner touches de clavier
+const clavierToNote = {
+  // Octave 4
+  a: "C4",
+  z: "D4",
+  e: "E4",
+  r: "F4",
+  t: "G4",
+  y: "A4",
+  u: "B4",
+  i: "C5",
+
+  // Octave 5
+  w: "C5",
+  x: "D5",
+  c: "E5",
+  v: "F5",
+  b: "G5",
+  n: "A5",
+  ",": "B5",
+  ";": "C6",
+
+  // Octave 4 Dièse et bémol
+  é: "C#4",
+  '"': "D#4",
+  "(": "F#4",
+  "-": "G#4",
+  è: "A#4",
+
+  // Octave 5 Dièse et bémol
+  s: "C#5",
+  d: "D#5",
+  g: "F#5",
+  h: "G#5",
+  j: "A#5",
+};
+
+const activeNotes = {};
+
+document.addEventListener("keydown", (event) => {
+  const note = clavierToNote[event.key.toLowerCase()];
+  if (note && !activeNotes[event.key]) {
+    activeNotes[event.key] = note;
+
+    // Jouer note tenue (pas de durée => null)
+    mp.play(note, null);
+
+    highlightKey(note, true);
+  }
+});
+
+document.addEventListener("keyup", (event) => {
+  const note = clavierToNote[event.key.toLowerCase()];
+  if (note) {
+    mp.stop(note);
+    delete activeNotes[event.key];
+
+    highlightKey(note, false);
+  }
+});
+
+// Fonction pour mettre à jour le visuel
+function highlightKey(note, isActive) {
+  const key = document.querySelector(`[data-note="${note}"]`);
+  if (key) {
+    key.classList.toggle("active", isActive);
+  }
+}
+
 // Import file to read tablatures
 const importBtn = document.getElementById("importBtn");
 const fileInput = document.getElementById("fileInput");

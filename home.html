@@ -31,6 +31,16 @@
         background: #ccc;
         box-shadow: inset 0 5px 5px rgba(0, 0, 0, 0.3);
       }
+      .blackButtons.active {
+        background: #555;
+        color: white;
+        box-shadow: inset 0 3px 3px rgba(0, 0, 0, 0.5);
+      }
+      .white-key.active {
+        background: #555;
+        color: white;
+        box-shadow: inset 0 3px 3px rgba(0, 0, 0, 0.5);
+      }
     </style>
   </head>
   <body>
@@ -41,18 +51,17 @@
         style="display: flex; flex-direction: row; justify-self: space-between"
       >
         <div>
-          <button class="blackButtons">Do#/Ré♭</button>
-          <button class="blackButtons">Ré#/Mi♭</button>
-          <button class="blackButtons">Fa#/Sol♭</button>
-          <button class="blackButtons">Sol#/La♭</button>
-          <button class="blackButtons">La#/Si♭</button>
-        </div>
-        <div>
-          <button class="blackButtons">Do#/Ré♭</button>
-          <button class="blackButtons">Ré#/Mi♭</button>
-          <button class="blackButtons">Fa#/Sol♭</button>
-          <button class="blackButtons">Sol#/La♭</button>
-          <button class="blackButtons">La#/Si♭</button>
+          <button class="blackButtons" data-note="C#4">Do#/Ré♭</button>
+          <button class="blackButtons" data-note="D#4">Ré#/Mi♭</button>
+          <button class="blackButtons" data-note="F#4">Fa#/Sol♭</button>
+          <button class="blackButtons" data-note="G#4">Sol#/La♭</button>
+          <button class="blackButtons" data-note="A#4">La#/Si♭</button>
+
+          <button class="blackButtons" data-note="C#5">Do#/Ré♭</button>
+          <button class="blackButtons" data-note="D#5">Ré#/Mi♭</button>
+          <button class="blackButtons" data-note="F#5">Fa#/Sol♭</button>
+          <button class="blackButtons" data-note="G#5">Sol#/La♭</button>
+          <button class="blackButtons" data-note="A#5">La#/Si♭</button>
         </div>
         <div>
           <button class="blackButtons">Do#/Ré♭</button>
@@ -72,21 +81,21 @@
     </div>
     <div class="piano">
       <!-- 2 octaves = 14 touches blanches -->
-      <div class="white-key">Do</div>
-      <div class="white-key">Ré</div>
-      <div class="white-key">Mi</div>
-      <div class="white-key">Fa</div>
-      <div class="white-key">Sol</div>
-      <div class="white-key">La</div>
-      <div class="white-key">Si</div>
+      <div class="white-key" data-note="C4">Do</div>
+      <div class="white-key" data-note="D4">Ré</div>
+      <div class="white-key" data-note="E4">Mi</div>
+      <div class="white-key" data-note="F4">Fa</div>
+      <div class="white-key" data-note="G4">Sol</div>
+      <div class="white-key" data-note="A4">La</div>
+      <div class="white-key" data-note="B4">Si</div>
 
-      <div class="white-key">Do</div>
-      <div class="white-key">Ré</div>
-      <div class="white-key">Mi</div>
-      <div class="white-key">Fa</div>
-      <div class="white-key">Sol</div>
-      <div class="white-key">La</div>
-      <div class="white-key">Si</div>
+      <div class="white-key" data-note="C5">Do</div>
+      <div class="white-key" data-note="D5">Ré</div>
+      <div class="white-key" data-note="E5">Mi</div>
+      <div class="white-key" data-note="F5">Fa</div>
+      <div class="white-key" data-note="G5">Sol</div>
+      <div class="white-key" data-note="A5">La</div>
+      <div class="white-key" data-note="B5">Si</div>
 
       <div class="white-key">Do</div>
       <div class="white-key">Ré</div>
