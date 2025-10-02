@@ -246,20 +246,15 @@
       <button id="noteCountBtn">Jouer</button>
     </div>
 
-    <button id="importBtn">Importer une partition</button>
-    <input type="file" id="fileInput" accept=".txt" style="display: none" />
-    <p id="message"></p>
-    <div class="music-player" id="player">
-    <div id="player" style="display: none; margin-top: 20px">
-      <button id="playPauseBtn">⏵</button>
-      <span id="currentTime">0:00</span> / <span id="totalTime">0:00</span>
-      <progress
-        id="progressBar"
-        value="0"
-        max="100"
-        style="width: 300px; cursor: pointer"
-      ></progress>
-    </div>
+      <button id="importBtn">Importer une partition</button>
+  <input type="file" id="fileInput" accept=".txt" style="display: none" />
+  <p id="message"></p>
+
+  <div id="player">
+    <button id="playPauseBtn">⏵</button>
+    <span id="currentTime">0:00</span> / <span id="totalTime">0:00</span>
+    <progress id="progressBar" value="0" max="100"></progress>
+  </div>
     <script type="module" src="home.js"></script>
   </body>
 </html>
