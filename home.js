@@ -15,7 +15,6 @@ document.addEventListener(
   { once: true }
 );
 
-
 noteCountBtn.addEventListener("click", async () => {
   if (noteCount.value <= 100) {
     if (document.querySelector("#toManyNotesMsg")) {
