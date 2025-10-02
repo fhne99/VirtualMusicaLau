@@ -4,9 +4,9 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>VirtualMusicLau</title>
-    <link rel="stylesheet" type="text/css" href="home.css">
+    <link rel="stylesheet" type="text/css" href="home.css" />
     <style>
-         body {
+      body {
         margin: 0;
         padding: 0;
         font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
@@ -14,39 +14,38 @@
         color: #f4f4f4;
         text-align: center;
       }
-        h1 {
-        margin: 20px 0;
+      h1 {
+        margin: 20px;
         font-size: 2.8rem;
         font-weight: bold;
         color: #ffcc00;
-        text-shadow: 2px 2px 8px rgba(0,0,0,0.7);
+        text-shadow: 2px 2px 8px rgba(0, 0, 0, 0.7);
         letter-spacing: 2px;
       }
-        h2 {
+      h2 {
         margin-top: 40px;
         font-size: 1.8rem;
         color: #00e6e6;
-        text-shadow: 1px 1px 5px rgba(0,0,0,0.6);
+        text-shadow: 1px 1px 5px rgba(0, 0, 0, 0.6);
       }
-       .piano {
+      .piano {
         position: relative;
         display: flex;
         height: 200px;
-        margin: 20px;
+        margin: 20px auto;
         border: 3px solid #333;
-
+        max-width: 95%;
         white-space: nowrap;
       }
 
-      /* touches blanches */
+      /* Touches blanches */
       .white-key {
-        width: 60px;
-        height: 200px;
-        color:black;
+        flex: 1;
+        height: 100%;
+        color: black;
         background: linear-gradient(to bottom, #fff, #eee);
         border: 1px solid black;
         border-radius: 0 0 5px 5px;
-        box-shadow: 0 5px 5px rgba(0, 0, 0, 0.3);
         position: relative;
         z-index: 1;
         cursor: pointer;
@@ -59,23 +58,19 @@
           inset 0 4px 6px rgba(0, 0, 0, 0.5);
         transition: all 0.1s ease-in-out;
       }
+
       .white-key:active {
-        background: linear-gradient(
-          to bottom,
-          #ddd,
-          #bbb
-        ); /* touche plus sombre quand pressée */
-        box-shadow: inset 0 3px 5px rgba(0, 0, 0, 0.4); /* relief creusé */
-        transform: translateY(3px); /* touche descend légèrement */
+        background: linear-gradient(to bottom, #ddd, #bbb);
+        box-shadow: inset 0 3px 5px rgba(0, 0, 0, 0.4);
+        transform: translateY(3px);
       }
 
-      /* touches noires */
+      /* Touches noires */
       .blackButtons {
-        width: 40px;
-        height: 120px;
-
-        background: linear-gradient(to bottom, #111, #000);
         position: absolute;
+        width: 2.6%; 
+        height: 60%;
+        background: linear-gradient(to bottom, #111, #000);
         top: 0;
         z-index: 2;
         border-radius: 0 0 3px 3px;
@@ -91,88 +86,89 @@
           inset 0 4px 6px rgba(0, 0, 0, 0.5);
         transition: all 0.1s ease-in-out;
       }
+
       .blackButtons:active {
         background: linear-gradient(to bottom, #222, #000);
         box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.7),
           inset 0 -2px 3px rgba(255, 255, 255, 0.1);
         transform: translateY(3px);
       }
-      .blackButtons.active {
-        background: #555;
-        color: white;
-        box-shadow: inset 0 3px 3px rgba(0, 0, 0, 0.5);
-      }
+
+      .blackButtons.active,
       .white-key.active {
         background: #555;
         color: white;
         box-shadow: inset 0 3px 3px rgba(0, 0, 0, 0.5);
       }
 
-      /* position des touches noires */
+      /* Positions des touches noires par rapport aux touches blanches (28 blanches) */
       .blackButtons[data-note="C#4"] {
-        left: 40px;
+        left: calc((0 + 0.5) * 100% / 28);
       }
       .blackButtons[data-note="D#4"] {
-        left: 100px;
+        left: calc((1 + 0.5) * 100% / 28);
       }
       .blackButtons[data-note="F#4"] {
-        left: 220px;
+        left: calc((3 + 0.5) * 100% / 28);
       }
       .blackButtons[data-note="G#4"] {
-        left: 280px;
+        left: calc((4 + 0.5) * 100% / 28);
       }
       .blackButtons[data-note="A#4"] {
-        left: 340px;
+        left: calc((5 + 0.5) * 100% / 28);
       }
+
       .blackButtons[data-note="C#5"] {
-        left: 457px;
+        left: calc((7 + 0.5) * 100% / 28);
       }
       .blackButtons[data-note="D#5"] {
-        left: 513px;
+        left: calc((8 + 0.5) * 100% / 28);
       }
       .blackButtons[data-note="F#5"] {
-        left: 625px;
+        left: calc((10 + 0.5) * 100% / 28);
       }
       .blackButtons[data-note="G#5"] {
-        left: 685px;
+        left: calc((11 + 0.5) * 100% / 28);
       }
       .blackButtons[data-note="A#5"] {
-        left: 745px;
+        left: calc((12 + 0.5) * 100% / 28);
       }
+
       .blackButtons[data-note="C#6"] {
-        left: 868px;
+        left: calc((14 + 0.5) * 100% / 28);
       }
       .blackButtons[data-note="D#6"] {
-        left: 925px;
+        left: calc((15 + 0.5) * 100% / 28);
       }
       .blackButtons[data-note="F#6"] {
-        left: 1035px;
+        left: calc((17 + 0.5) * 100% / 28);
       }
       .blackButtons[data-note="G#6"] {
-        left: 1095px;
+        left: calc((18 + 0.5) * 100% / 28);
       }
       .blackButtons[data-note="A#6"] {
-        left: 1164px;
+        left: calc((19 + 0.5) * 100% / 28);
       }
-       .blackButtons[data-note="C#7"] {
-        left: 1279px;
+
+      .blackButtons[data-note="C#7"] {
+        left: calc((21 + 0.5) * 100% / 28);
       }
       .blackButtons[data-note="D#7"] {
-        left: 1338px;
+        left: calc((22 + 0.5) * 100% / 28);
       }
       .blackButtons[data-note="F#7"] {
-        left: 1455px;
+        left: calc((24 + 0.5) * 100% / 28);
       }
       .blackButtons[data-note="G#7"] {
-        left: 1510px;
+        left: calc((25 + 0.5) * 100% / 28);
       }
       .blackButtons[data-note="A#7"] {
-        left: 1571px;
+        left: calc((26 + 0.5) * 100% / 28);
       }
     </style>
   </head>
   <body>
-     <h1>🎹 VirtualMusicLau 🎶</h1>
+    <h1>🎹 VirtualMusicLau 🎶</h1>
 
     <div class="piano">
       <button class="blackButtons" data-note="C#4">Do#/Ré♭</button>
@@ -194,9 +190,9 @@
       <button class="blackButtons" data-note="A#6">La#/Si♭</button>
 
       <button class="blackButtons" data-note="C#7">Do#/Ré♭</button>
-      <button class="blackButtons"data-note="D#7">Ré#/Mi♭</button>
+      <button class="blackButtons" data-note="D#7">Ré#/Mi♭</button>
       <button class="blackButtons" data-note="F#7">Fa#/Sol♭</button>
-      <button class="blackButtons"data-note="G#7">Sol#/La♭</button>
+      <button class="blackButtons" data-note="G#7">Sol#/La♭</button>
       <button class="blackButtons" data-note="A#7">La#/Si♭</button>
       <div class="white-key" data-note="C4">Do</div>
       <div class="white-key" data-note="D4">Ré</div>
@@ -231,16 +227,16 @@
       <div class="white-key" data-note="B7">Si</div>
     </div>
 
-
-<button class="enregister" id="start">Démarrer l'enregistrement pour avoir la partition</button>
-<button class="enregister" id="stop">Arreter l'enregistrement pour avoir la partition</button>
-<button id="downloadBtn">Télécharger ma partition</button>
-
-
-
+    <button class="enregister" id="start">
+      Démarrer l'enregistrement pour avoir la partition
+    </button>
+    <button class="enregister" id="stop">
+      Arreter l'enregistrement pour avoir la partition
+    </button>
+    <button id="downloadBtn">Télécharger ma partition</button>
 
     <h2>Générateur de séquence musicale</h2>
-    <div id="musicGenerator" style="margin-bottom: 20px;">
+    <div id="musicGenerator" style="margin-bottom: 20px">
       <label for="noteCount">Nombre de notes à jouer </label>
       <input id="noteCount" name="noteCount" type="number" min="1" max="100" />
       <label for="tempo">Choisi un rythme:</label>
@@ -253,15 +249,15 @@
       <button id="noteCountBtn">Jouer</button>
     </div>
 
-      <button id="importBtn">Importer une partition</button>
-  <input type="file" id="fileInput" accept=".txt" style="display: none" />
-  <p id="message"></p>
+    <button id="importBtn">Importer une partition</button>
+    <input type="file" id="fileInput" accept=".txt" style="display: none" />
+    <p id="message"></p>
 
-  <div id="player">
-    <button id="playPauseBtn">⏵</button>
-    <span id="currentTime">0:00</span> / <span id="totalTime">0:00</span>
-    <progress id="progressBar" value="0" max="100"></progress>
-  </div>
+    <div id="player">
+      <button id="playPauseBtn">⏵</button>
+      <span id="currentTime">0:00</span> / <span id="totalTime">0:00</span>
+      <progress id="progressBar" value="0" max="100"></progress>
+    </div>
     <script type="module" src="home.js"></script>
   </body>
 </html>
