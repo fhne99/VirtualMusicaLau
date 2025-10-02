@@ -86,7 +86,6 @@ Array.from(document.getElementsByClassName("blackButtons")).forEach(
     ];
     btn.addEventListener("click", () => {
       mp.play(notesNoires[i], 1);
-      recordNote(notesNoires[i]);
     });
   }
 );
@@ -127,7 +126,6 @@ document.querySelectorAll(".white-key").forEach((key, i) => {
 
   key.addEventListener("click", () => {
     mp.play(notesBlanches[i], 1);
-    recordNote(notesBlanches[i]);
   });
 });
 
@@ -209,7 +207,7 @@ document.addEventListener("keydown", (event) => {
 
     // Jouer note tenue (pas de durée => null)
     mp.play(note, null);
-    recordNote(note);
+
     highlightKey(note, true);
   }
 });
@@ -426,64 +424,3 @@ function formatTime(seconds) {
   const sec = Math.floor(seconds % 60);
   return `${min}:${sec.toString().padStart(2, "0")}`;
 }
-// Enregistrement
-let isRecording = false;
-let recordedNotes = [];
-console.log(recordedNotes);
-
-let lastTime = null;
-
-function recordNote(note) {
-  if (!isRecording) return;
-
-  const now = Date.now();
-
-  if (lastTime) {
-    const delta = (now - lastTime) / 1000; // en secondes
-    recordedNotes.push(["0", delta.toFixed(3)]); // silence
-  }
-
-  recordedNotes.push([note, 0.125]); // durée fixe (tu peux adapter)
-  lastTime = now;
-  console.log(recordedNotes);
-}
-
-// Boutons start/stop
-const startBtn = document.getElementById("start");
-const stopBtn = document.getElementById("stop");
-const downloadBtn = document.getElementById("downloadBtn");
-
-startBtn.addEventListener("click", () => {
-  recordedNotes = [];
-  lastTime = null;
-  isRecording = true;
-  alert("🎙️ Enregistrement démarré !");
-});
-
-stopBtn.addEventListener("click", () => {
-  isRecording = false;
-  alert("⏹️ Enregistrement arrêté !");
-});
-
-// Télécharger le fichier
-downloadBtn.addEventListener("click", () => {
-  if (recordedNotes.length === 0) {
-    alert("Aucune note enregistrée !");
-    return;
-  }
-
-  let content = "Unknown 0.125\n";
-  recordedNotes.forEach(([note, duration]) => {
-    content += `${note} ${duration}\n`;
-  });
-
-  const blob = new Blob([content], { type: "text/plain" });
-  const url = URL.createObjectURL(blob);
-
-  const a = document.createElement("a");
-  a.href = url;
-  a.download = "partition.txt";
-  a.click();
-
-  URL.revokeObjectURL(url);
-});
