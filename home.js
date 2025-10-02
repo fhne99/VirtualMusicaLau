@@ -1,89 +1,203 @@
 import MusicPlayer from "./player.js";
-const noteCount = document.querySelector('#noteCount');
-const noteCountBtn = document.querySelector('#noteCountBtn');
+const noteCount = document.querySelector("#noteCount");
+const noteCountBtn = document.querySelector("#noteCountBtn");
 const mp = new MusicPlayer();
-
-noteCountBtn.addEventListener('click', async() => {
-    for (let i = 0; i < noteCount.value; i++) {
-        const note = await getRandomNote();
-        console.log(note, i)
-        mp.play(note, 1);
-    }
-
-});
-
-// Charger le fichier JSON
-async function loadNotes() {
-  const response = await fetch("fichier.json");
-  if (!response.ok) {
-    throw new Error("Erreur lors du chargement de note.json");
+document.addEventListener(
+  "click",
+  () => {
+    if (mp.audioCtx.state === "suspended") mp.audioCtx.resume();
+  },
+  { once: true }
+);
+let notes = {}; //
+// Create random notes played when clicked play
+noteCountBtn.addEventListener("click", async () => {
+  for (let i = 0; i < noteCount.value; i++) {
+    const note = await getRandomNote();
+    console.log(note, i);
+    mp.play(note, 1);
   }
-  return await response.json();
-}
+});
 
 //Générer un nombre aléatoire
 const randomNbr = (max) => {
-    return Math.floor(Math.random() * max)
+  return Math.floor(Math.random() * max);
 };
-
+async function loadNotes() {
+  const response = await fetch("./fichier.json");
+  notes = await response.json();
+  return notes; // <-- important
+}
 async function getRandomNote() {
   const notesObj = await loadNotes();
   const keys = Object.keys(notesObj);
-console.log(randomNbr(keys.length));
-
+  console.log(randomNbr(keys.length));
 
   const idx = randomNbr(keys.length);
   const note = keys[idx].toString();
 
-  return  note ;
+  return note;
 }
 
-
-fetch("fichier.json")
-  .then((response) => response.json())
-  .then((notes) => {
-
-    // gammeReNoires.forEach(nom => setTimeout(() => mp.play(nom, 0.5), 500 * gammeReNoires.indexOf(nom)));
-  })
-  .catch((err) => {
-    console.error("Erreur lors du chargement ou du traitement du JSON :", err);
-  });
-
-// ...après la création de mp...
-Array.from(document.getElementsByClassName("blackButtons")).forEach((btn, i) => {
-  const notesNoires = [
-    "C#4",
-    "D#4",
-    "F#4",
-    "G#4",
-    "A#4",
-    "C#5",
-    "D#5",
-    "F#5",
-    "G#5",
-    "A#5",
-  ];
-  btn.addEventListener("click", () => {
-    mp.play(notesNoires[i], 1);
-  });
-});
+// Assign piano keys to notes
+Array.from(document.getElementsByClassName("blackButtons")).forEach(
+  (btn, i) => {
+    const notesNoires = [
+      "C#4",
+      "D#4",
+      "F#4",
+      "G#4",
+      "A#4",
+      "C#5",
+      "D#5",
+      "F#5",
+      "G#5",
+      "A#5",
+      "C#6",
+      "D#6",
+      "F#6",
+      "G#6",
+      "A#6",
+      "C#7",
+      "D#7",
+      "F#7",
+      "G#7",
+      "A#7",
+    ];
+    btn.addEventListener("click", () => {
+      mp.play(notesNoires[i], 1);
+    });
+  }
+);
 
 // jouer les touches blanches du piano
 document.querySelectorAll(".white-key").forEach((key, i) => {
   // Notes blanches sur 2 octaves (Do4 à Si5)
   const notesBlanches = [
-    "C4", "D4", "E4", "F4", "G4", "A4", "B4",
-    "C5", "D5", "E5", "F5", "G5", "A5", "B5",
+    "C4",
+    "D4",
+    "E4",
+    "F4",
+    "G4",
+    "A4",
+    "B4",
+    "C5",
+    "D5",
+    "E5",
+    "F5",
+    "G5",
+    "A5",
+    "B5",
+    "C6",
+    "D6",
+    "E6",
+    "F6",
+    "G6",
+    "A6",
+    "B6",
+    "C7",
+    "D7",
+    "E7",
+    "F7",
+    "G7",
+    "A7",
+    "B7",
   ];
 
   key.addEventListener("click", () => {
-    mp.play(notesBlanches[i], 1); 
+    mp.play(notesBlanches[i], 1);
   });
 });
 
-const importBtn = document.getElementById('importBtn');
-const fileInput = document.getElementById('fileInput');
-const message = document.getElementById('message');
+//Assigner touches de clavier
+const clavierToNote = {
+  // Octave 4
+  a: "C4",
+  z: "D4",
+  e: "E4",
+  r: "F4",
+  t: "G4",
+  y: "A4",
+  u: "B4",
+  i: "C5",
+
+  // Octave 5
+  w: "C5",
+  x: "D5",
+  c: "E5",
+  v: "F5",
+  b: "G5",
+  n: "A5",
+  ",": "B5",
+  ";": "C6",
+
+  // Octave 4 Dièse et bémol
+  é: "C#4",
+  '"': "D#4",
+  "(": "F#4",
+  "-": "G#4",
+  è: "A#4",
+
+  // Octave 5 Dièse et bémol
+  s: "C#5",
+  d: "D#5",
+  g: "F#5",
+  h: "G#5",
+  j: "A#5",
+};
+
+const activeNotes = {};
+
+document.addEventListener("keydown", (event) => {
+  const note = clavierToNote[event.key.toLowerCase()];
+  if (note && !activeNotes[event.key]) {
+    activeNotes[event.key] = note;
+
+    // Jouer note tenue (pas de durée => null)
+    mp.play(note, null);
+
+    highlightKey(note, true);
+  }
+});
+
+document.addEventListener("keyup", (event) => {
+  const note = clavierToNote[event.key.toLowerCase()];
+  if (note) {
+    mp.stop(note);
+    delete activeNotes[event.key];
+
+    highlightKey(note, false);
+  }
+});
+
+// Fonction pour mettre à jour le visuel
+function highlightKey(note, isActive) {
+  const key = document.querySelector(`[data-note="${note}"]`);
+  if (key) {
+    key.classList.toggle("active", isActive);
+  }
+}
+
+// Import file to read tablatures
+const importBtn = document.getElementById("importBtn");
+const fileInput = document.getElementById("fileInput");
+const message = document.getElementById("message");
+
+importBtn.addEventListener("click", () => {
+  fileInput.click();
+});
+
+fileInput.addEventListener("change", (event) => {
+  const file = event.target.files[0];
+  if (!file) return;
+
+  const reader = new FileReader();
+  reader.onload = function (e) {
+    const content = e.target.result;
+    message.textContent = "Fichier importé";
+  };
+  reader.readAsText(file);
+});
 
 const playerDiv = document.getElementById("player");
 const playPauseBtn = document.getElementById("playPauseBtn");
@@ -115,21 +229,23 @@ async function loadFrequencies() {
 }
 await loadFrequencies();
 
-importBtn.addEventListener('click', () => {
-  if (audioContext.state === 'suspended') audioContext.resume();
+importBtn.addEventListener("click", () => {
+  if (audioContext.state === "suspended") audioContext.resume();
   fileInput.click();
 });
 
-fileInput.addEventListener('change', (event) => {
+fileInput.addEventListener("change", (event) => {
   const file = event.target.files[0];
   if (!file) return;
 
   const reader = new FileReader();
-  reader.onload = function(e) {
+  reader.onload = function (e) {
     const content = e.target.result;
     scoreData = parseScore(content);
 
-    const missingNote = scoreData.find(item => item.note !== '0' && !NOTE_FREQUENCIES[item.note]);
+    const missingNote = scoreData.find(
+      (item) => item.note !== "0" && !NOTE_FREQUENCIES[item.note]
+    );
     if (missingNote) {
       message.textContent = `Erreur : La note ${missingNote.note} n'est pas définie.`;
       return;
@@ -152,7 +268,10 @@ playPauseBtn.addEventListener("click", () => {
   if (!isPlaying) {
     isPlaying = true;
     playPauseBtn.textContent = "⏸";
-    startTime = pauseTime > 0 ? audioContext.currentTime - pauseTime : audioContext.currentTime;
+    startTime =
+      pauseTime > 0
+        ? audioContext.currentTime - pauseTime
+        : audioContext.currentTime;
     if (pauseTime === 0) currentIndex = 0;
     playFrom(currentIndex);
   } else {
@@ -192,13 +311,13 @@ progressBar.addEventListener("click", (e) => {
 function parseScore(rawContent) {
   return rawContent
     .trim()
-    .split('\n')
+    .split("\n")
     .slice(1)
-    .map(line => {
+    .map((line) => {
       const [note, duration] = line.trim().split(/\s+/);
       return { note: note.toUpperCase(), duration: parseFloat(duration) };
     })
-    .filter(item => !isNaN(item.duration));
+    .filter((item) => !isNaN(item.duration));
 }
 
 function playFrom(index) {
@@ -215,9 +334,12 @@ function playFrom(index) {
   const item = scoreData[index];
   const frequency = NOTE_FREQUENCIES[item.note] || SILENCE_FREQUENCY;
 
-  if (frequency > 0) playTone(frequency, audioContext.currentTime, item.duration);
+  if (frequency > 0)
+    playTone(frequency, audioContext.currentTime, item.duration);
 
-  const elapsedTime = scoreData.slice(0, index).reduce((sum, i) => sum + i.duration, 0);
+  const elapsedTime = scoreData
+    .slice(0, index)
+    .reduce((sum, i) => sum + i.duration, 0);
   currentTimeSpan.textContent = formatTime(elapsedTime);
   progressBar.value = (elapsedTime / scoreDuration) * 100;
 
@@ -229,7 +351,7 @@ function playTone(frequency, startTime, duration) {
   const oscillator = audioContext.createOscillator();
   const gainNode = audioContext.createGain();
 
-  oscillator.type = 'sawtooth';
+  oscillator.type = "sawtooth";
   oscillator.frequency.setValueAtTime(frequency, startTime);
 
   gainNode.gain.setValueAtTime(0, startTime);
