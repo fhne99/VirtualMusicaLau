@@ -6,81 +6,147 @@
     <title>VirtualMusicLau</title>
     <style>
       .piano {
-        display: flex;
         position: relative;
+        display: flex;
+        height: 200px;
+        margin: 20px;
+        border: 3px solid #333;
+
+        overflow-x: auto;
+        white-space: nowrap;
       }
 
+      /* touches blanches */
       .white-key {
-        width: 40px;
+        width: 60px;
         height: 200px;
-        background: white;
+        background: linear-gradient(to bottom, #fff, #eee);
         border: 1px solid black;
         border-radius: 0 0 5px 5px;
         box-shadow: 0 5px 5px rgba(0, 0, 0, 0.3);
-        margin-right: 2px;
         position: relative;
         z-index: 1;
         cursor: pointer;
+        display: flex;
+        justify-content: center;
+        align-items: flex-end;
+        font-size: 14px;
+        box-shadow: 0 3px 5px rgba(0, 0, 0, 0.7),
+          inset 0 -4px 6px rgba(255, 255, 255, 0.05),
+          inset 0 4px 6px rgba(0, 0, 0, 0.5);
+        transition: all 0.1s ease-in-out;
       }
-
-      .white-key:last-child {
-        margin-right: 0;
-      }
-
       .white-key:active {
-        background: #ccc;
-        box-shadow: inset 0 5px 5px rgba(0, 0, 0, 0.3);
+        background: linear-gradient(
+          to bottom,
+          #ddd,
+          #bbb
+        ); /* touche plus sombre quand pressée */
+        box-shadow: inset 0 3px 5px rgba(0, 0, 0, 0.4); /* relief creusé */
+        transform: translateY(3px); /* touche descend légèrement */
       }
-      .blackButtons.active {
-        background: #555;
+
+      /* touches noires */
+      .blackButtons {
+        width: 40px;
+        height: 120px;
+        background: linear-gradient(to bottom, #111, #000);
+        position: absolute;
+        top: 0;
+        z-index: 2;
+        border-radius: 0 0 3px 3px;
+        cursor: pointer;
         color: white;
-        box-shadow: inset 0 3px 3px rgba(0, 0, 0, 0.5);
+        display: flex;
+        justify-content: center;
+        align-items: flex-end;
+        padding-bottom: 5px;
+        font-size: 12px;
+        box-shadow: 0 3px 5px rgba(0, 0, 0, 0.7),
+          inset 0 -4px 6px rgba(255, 255, 255, 0.05),
+          inset 0 4px 6px rgba(0, 0, 0, 0.5);
+        transition: all 0.1s ease-in-out;
       }
-      .white-key.active {
-        background: #555;
-        color: white;
-        box-shadow: inset 0 3px 3px rgba(0, 0, 0, 0.5);
+      .blackButtons:active {
+        background: linear-gradient(to bottom, #222, #000);
+        box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.7),
+          inset 0 -2px 3px rgba(255, 255, 255, 0.1);
+        transform: translateY(3px);
+      }
+
+      /* position des touches noires */
+      .blackButtons[data-note="C#4"] {
+        left: 45px;
+      }
+      .blackButtons[data-note="D#4"] {
+        left: 105px;
+      }
+      .blackButtons[data-note="F#4"] {
+        left: 225px;
+      }
+      .blackButtons[data-note="G#4"] {
+        left: 285px;
+      }
+      .blackButtons[data-note="A#4"] {
+        left: 345px;
+      }
+      .blackButtons[data-note="C#5"] {
+        left: 472px;
+      }
+      .blackButtons[data-note="D#5"] {
+        left: 531px;
+      }
+      .blackButtons[data-note="F#5"] {
+        left: 595px;
+      }
+      .blackButtons[data-note="G#5"] {
+        left: 718px;
+      }
+      .blackButtons[data-note="A#5"] {
+        left: 785px;
+      }
+      .blackButtons[data-note="A#5"] {
+        left: 785px;
+      }
+      .blackButtons[data-note="A#5"] {
+        left: 785px;
+      }
+      .blackButtons[data-note="A#5"] {
+        left: 785px;
+      }
+      .blackButtons[data-note="A#5"] {
+        left: 785px;
+      }
+      .blackButtons[data-note="A#5"] {
+        left: 785px;
       }
     </style>
   </head>
   <body>
-    <div
-      style="display: flex; flex-direction: column; justify-self: space-between"
-    >
-      <div
-        style="display: flex; flex-direction: row; justify-self: space-between"
-      >
-        <div>
-          <button class="blackButtons" data-note="C#4">Do#/Ré♭</button>
-          <button class="blackButtons" data-note="D#4">Ré#/Mi♭</button>
-          <button class="blackButtons" data-note="F#4">Fa#/Sol♭</button>
-          <button class="blackButtons" data-note="G#4">Sol#/La♭</button>
-          <button class="blackButtons" data-note="A#4">La#/Si♭</button>
-
-          <button class="blackButtons" data-note="C#5">Do#/Ré♭</button>
-          <button class="blackButtons" data-note="D#5">Ré#/Mi♭</button>
-          <button class="blackButtons" data-note="F#5">Fa#/Sol♭</button>
-          <button class="blackButtons" data-note="G#5">Sol#/La♭</button>
-          <button class="blackButtons" data-note="A#5">La#/Si♭</button>
-        </div>
-        <div>
-          <button class="blackButtons">Do#/Ré♭</button>
-          <button class="blackButtons">Ré#/Mi♭</button>
-          <button class="blackButtons">Fa#/Sol♭</button>
-          <button class="blackButtons">Sol#/La♭</button>
-          <button class="blackButtons">La#/Si♭</button>
-        </div>
-        <div>
-          <button class="blackButtons">Do#/Ré♭</button>
-          <button class="blackButtons">Ré#/Mi♭</button>
-          <button class="blackButtons">Fa#/Sol♭</button>
-          <button class="blackButtons">Sol#/La♭</button>
-          <button class="blackButtons">La#/Si♭</button>
-        </div>
-      </div>
-    </div>
     <div class="piano">
-      <!-- 2 octaves = 14 touches blanches -->
+      <button class="blackButtons" data-note="C#4">Do#/Ré♭</button>
+      <button class="blackButtons" data-note="D#4">Ré#/Mi♭</button>
+      <button class="blackButtons" data-note="F#4">Fa#/Sol♭</button>
+      <button class="blackButtons" data-note="G#4">Sol#/La♭</button>
+      <button class="blackButtons" data-note="A#4">La#/Si♭</button>
+
+      <button class="blackButtons" data-note="C#5">Do#/Ré♭</button>
+      <button class="blackButtons" data-note="D#5">Ré#/Mi♭</button>
+      <button class="blackButtons" data-note="F#5">Fa#/Sol♭</button>
+      <button class="blackButtons" data-note="G#5">Sol#/La♭</button>
+      <button class="blackButtons" data-note="A#5">La#/Si♭</button>
+
+      <button class="blackButtons" data-note="C#6">Do#/Ré♭</button>
+      <button class="blackButtons" data-note="D#6">Ré#/Mi♭</button>
+      <button class="blackButtons" data-note="F#6">Fa#/Sol♭</button>
+      <button class="blackButtons" data-note="G#6">Sol#/La♭</button>
+      <button class="blackButtons" data-note="A#6">La#/Si♭</button>
+
+      <button class="blackButtons" data-note="C#7">Do#/Ré♭</button>
+      <button class="blackButtons"data-note="D#7">Ré#/Mi♭</button>
+      <button class="blackButtons" data-note="F#7">Fa#/Sol♭</button>
+      <button class="blackButtons"data-note="G#7">Sol#/La♭</button>
+      <button class="blackButtons" data-note="A#7">La#/Si♭</button>
       <div class="white-key" data-note="C4">Do</div>
       <div class="white-key" data-note="D4">Ré</div>
       <div class="white-key" data-note="E4">Mi</div>
