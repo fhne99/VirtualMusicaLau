@@ -32,6 +32,8 @@ class MusicPlayer {
 
     oscillator.start();
 
+    this.activeOscillators[note] = oscillator;
+    
     if (duration) {
       oscillator.stop(this.audioCtx.currentTime + duration);
     } else {
