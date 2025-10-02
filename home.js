@@ -2,7 +2,7 @@ import MusicPlayer from "./player.js";
 const noteCount = document.querySelector("#noteCount");
 const noteCountBtn = document.querySelector("#noteCountBtn");
 const mp = new MusicPlayer();
-let notes = {}; 
+let notes = {};
 let tempo = 0;
 
 document.addEventListener(
@@ -13,24 +13,24 @@ document.addEventListener(
   { once: true }
 );
 
-noteCountBtn.addEventListener('click', async() => {
+noteCountBtn.addEventListener("click", async () => {
   if (noteCount.value <= 100) {
-    if (document.querySelector('#toManyNotesMsg')) {
-      document.querySelector('#toManyNotesMsg').remove();
+    if (document.querySelector("#toManyNotesMsg")) {
+      document.querySelector("#toManyNotesMsg").remove();
     }
 
     for (let i = 0; i < noteCount.value; i++) {
-    const note = await getRandomNote();
-    mp.play(note, tempo / 1000);
-    await new Promise(resolve => setTimeout(resolve, 500));
+      const note = await getRandomNote();
+      mp.play(note, tempo / 1000);
+      await new Promise((resolve) => setTimeout(resolve, 500));
     }
   } else {
-    if (!document.querySelector('#toManyNotesMsg')) {
-      const message = document.createElement('p');
+    if (!document.querySelector("#toManyNotesMsg")) {
+      const message = document.createElement("p");
       message.id = "toManyNotesMsg";
       message.textContent = "Non non pas plus de 100 notes";
-      message.style.color = 'red';
-      document.querySelector('#musicGenerator').appendChild(message);
+      message.style.color = "red";
+      document.querySelector("#musicGenerator").appendChild(message);
     }
   }
 });
@@ -43,21 +43,20 @@ async function loadNotes() {
   }
   notes = await response.json();
   return notes; // <-- important
-};
+}
 
 //Générer un nombre aléatoire
 const randomNbr = (max) => {
   return Math.floor(Math.random() * max);
 };
 
-
 async function getRandomNote() {
   const notesObj = await loadNotes();
   const keys = Object.keys(notesObj);
-  const idx = randomNbr(keys.length); 
-  const note = keys[idx].toString(); 
+  const idx = randomNbr(keys.length);
+  const note = keys[idx].toString();
   tempo = notesObj[note][1];
-  return  note 
+  return note;
 }
 
 // Assign piano keys to notes
@@ -265,7 +264,6 @@ fileInput.addEventListener("change", (event) => {
     scoreData = parseScore(content);
 
     // Vérification des notes
-    const missingNote = scoreData.find(item => item.note !== '0' && !NOTE_FREQUENCIES[item.note]);
     const missingNote = scoreData.find(
       (item) => item.note !== "0" && !NOTE_FREQUENCIES[item.note]
     );
