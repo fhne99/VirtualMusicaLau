@@ -13,24 +13,24 @@ document.addEventListener(
   { once: true }
 );
 
-noteCountBtn.addEventListener("click", async () => {
+noteCountBtn.addEventListener('click', async() => {
   if (noteCount.value <= 100) {
-    if (document.querySelector("#toManyNotesMsg")) {
-      document.querySelector("#toManyNotesMsg").remove();
+    if (document.querySelector('#toManyNotesMsg')) {
+      document.querySelector('#toManyNotesMsg').remove();
     }
 
     for (let i = 0; i < noteCount.value; i++) {
-      const note = await getRandomNote();
-      mp.play(note, tempo / 1000);
-      await new Promise((resolve) => setTimeout(resolve, 500));
+    const note = await getRandomNote();
+    mp.play(note, tempo / 1000);
+    await new Promise(resolve => setTimeout(resolve, 500));
     }
   } else {
-    if (!document.querySelector("#toManyNotesMsg")) {
-      const message = document.createElement("p");
+    if (!document.querySelector('#toManyNotesMsg')) {
+      const message = document.createElement('p');
       message.id = "toManyNotesMsg";
       message.textContent = "Non non pas plus de 100 notes";
-      message.style.color = "red";
-      document.querySelector("#musicGenerator").appendChild(message);
+      message.style.color = 'red';
+      document.querySelector('#musicGenerator').appendChild(message);
     }
   }
 });
@@ -43,12 +43,13 @@ async function loadNotes() {
   }
   notes = await response.json();
   return notes; // <-- important
-}
+};
 
 //Générer un nombre aléatoire
 const randomNbr = (max) => {
   return Math.floor(Math.random() * max);
 };
+
 
 async function getRandomNote() {
   const notesObj = await loadNotes();
@@ -56,7 +57,7 @@ async function getRandomNote() {
   const idx = randomNbr(keys.length);
   const note = keys[idx].toString();
   tempo = notesObj[note][1];
-  return note;
+  return  note
 }
 
 // Assign piano keys to notes
@@ -198,35 +199,18 @@ function highlightKey(note, isActive) {
   }
 }
 
-// Import file to read tablatures
-const importBtn = document.getElementById("importBtn");
-const fileInput = document.getElementById("fileInput");
-const message = document.getElementById("message");
+const importBtn = document.getElementById('importBtn');
+const fileInput = document.getElementById('fileInput');
+const message = document.getElementById('message');
 
-importBtn.addEventListener("click", () => {
-  fileInput.click();
-});
+const playerDiv = document.getElementById('player');
+const playPauseBtn = document.getElementById('playPauseBtn');
+const currentTimeSpan = document.getElementById('currentTime');
+const totalTimeSpan = document.getElementById('totalTime');
+const progressBar = document.getElementById('progressBar');
 
-fileInput.addEventListener("change", (event) => {
-  const file = event.target.files[0];
-  if (!file) return;
-
-  const reader = new FileReader();
-  reader.onload = function (e) {
-    const content = e.target.result;
-    message.textContent = "Fichier importé";
-  };
-  reader.readAsText(file);
-});
-
-const playerDiv = document.getElementById("player");
-const playPauseBtn = document.getElementById("playPauseBtn");
-const currentTimeSpan = document.getElementById("currentTime");
-const totalTimeSpan = document.getElementById("totalTime");
-const progressBar = document.getElementById("progressBar");
-
-const SILENCE_FREQUENCY = 0;
 const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+const SILENCE_FREQUENCY = 0;
 
 let NOTE_FREQUENCIES = {};
 let scoreData = [];
@@ -238,157 +222,148 @@ let playTimer = null;
 let scoreDuration = 0;
 
 async function loadFrequencies() {
-  try {
-    const response = await fetch("fichier.json");
-    if (!response.ok) throw new Error("Impossible de charger fichier.json");
-    NOTE_FREQUENCIES = await response.json();
-  } catch (err) {
-    console.error("Erreur :", err);
-    message.textContent = "Erreur lors du chargement des fréquences";
-  }
+    try {
+        const response = await fetch('fichier.json');
+        if (!response.ok) throw new Error('Impossible de charger fichier.json');
+        NOTE_FREQUENCIES = await response.json();
+    } catch (err) {
+        console.error(err);
+        message.textContent = "Erreur lors du chargement des fréquences";
+    }
 }
-await loadFrequencies();
+loadFrequencies();
 
-importBtn.addEventListener("click", () => {
-  if (audioContext.state === "suspended") audioContext.resume();
-  fileInput.click();
+importBtn.addEventListener('click', () => {
+    if(audioContext.state === "suspended") audioContext.resume();
+    fileInput.click();
 });
 
-fileInput.addEventListener("change", (event) => {
-  const file = event.target.files[0];
-  if (!file) return;
+fileInput.addEventListener('change', (e) => {
+    const file = e.target.files[0];
+    if(!file) return;
 
-  const reader = new FileReader();
-  reader.onload = function (e) {
-    const content = e.target.result;
-    scoreData = parseScore(content);
+    const reader = new FileReader();
+    reader.onload = (ev) => {
+        const content = ev.target.result;
+        scoreData = parseScore(content);
 
-    // Vérification des notes
-    const missingNote = scoreData.find(
-      (item) => item.note !== "0" && !NOTE_FREQUENCIES[item.note]
-    );
-    if (missingNote) {
-      message.textContent = `Erreur : La note ${missingNote.note} n'est pas définie.`;
-      return;
+        const missingNote = scoreData.find(item => item.note !== '0' && !NOTE_FREQUENCIES[item.note]);
+        if(missingNote){
+            message.textContent = `Erreur : note ${missingNote.note} non définie dans le JSON`;
+            return;
+        }
+
+        scoreDuration = scoreData.reduce((sum, item) => sum + item.duration, 0);
+
+        playerDiv.style.display = "flex";
+        progressBar.value = 0;
+        currentTimeSpan.textContent = "0:00";
+        totalTimeSpan.textContent = formatTime(scoreDuration);
+        currentIndex = 0;
+        pauseTime = 0;
+        isPlaying = false;
+        playPauseBtn.textContent = "⏵";
+    };
+    reader.readAsText(file);
+});
+
+progressBar.addEventListener('click', (e) => {
+    if (!scoreData.length) return;
+
+    const rect = progressBar.getBoundingClientRect();
+    const clickX = e.clientX - rect.left;
+    const newPercent = clickX / rect.width;
+    const newTime = newPercent * scoreDuration;
+
+    let accumulated = 0;
+    let newIndex = 0;
+    for (let i = 0; i < scoreData.length; i++) {
+        accumulated += scoreData[i].duration;
+        if (accumulated >= newTime) {
+            newIndex = i;
+            break;
+        }
     }
 
-    scoreDuration = scoreData.reduce((sum, item) => sum + item.duration, 0);
+    currentIndex = newIndex;
+    pauseTime = newTime;
 
-    playerDiv.style.display = "flex";
-    progressBar.value = 0;
-    currentTimeSpan.textContent = "0:00";
-    totalTimeSpan.textContent = formatTime(scoreDuration);
-    currentIndex = 0;
-    pauseTime = 0;
-    isPlaying = false;
-    playPauseBtn.textContent = "⏵";
-  };
-  reader.readAsText(file);
-});
-
-playPauseBtn.addEventListener("click", () => {
-  if (!isPlaying) {
-    isPlaying = true;
-    playPauseBtn.textContent = "⏸";
-    startTime =
-      pauseTime > 0
-        ? audioContext.currentTime - pauseTime
-        : audioContext.currentTime;
-    if (pauseTime === 0) currentIndex = 0;
-    playFrom(currentIndex);
-  } else {
-    isPlaying = false;
-    playPauseBtn.textContent = "⏵";
-    pauseTime = audioContext.currentTime - startTime;
-    clearTimeout(playTimer);
-  }
-});
-
-progressBar.addEventListener("click", (e) => {
-  if (!scoreData.length) return;
-  const rect = progressBar.getBoundingClientRect();
-  const clickX = e.clientX - rect.left;
-  const newPercent = clickX / rect.width;
-  const newTime = newPercent * scoreDuration;
-
-  let accumulated = 0;
-  for (let i = 0; i < scoreData.length; i++) {
-    accumulated += scoreData[i].duration;
-    if (accumulated >= newTime) {
-      currentIndex = i;
-      pauseTime = newTime;
-      if (!isPlaying) {
+    if (!isPlaying) {
         progressBar.value = newPercent * 100;
         currentTimeSpan.textContent = formatTime(newTime);
-      } else {
+    } else {
         clearTimeout(playTimer);
         startTime = audioContext.currentTime - pauseTime;
         playFrom(currentIndex);
-      }
-      break;
     }
-  }
 });
 
-function parseScore(rawContent) {
-  return rawContent
-    .trim()
-    .split("\n")
-    .slice(1)
-    .map((line) => {
-      const [note, duration] = line.trim().split(/\s+/);
-      return { note: note.toUpperCase(), duration: parseFloat(duration) };
-    })
-    .filter((item) => !isNaN(item.duration));
+function parseScore(content) {
+    return content.trim().split("\n").slice(1).map(line => {
+        const [note, duration] = line.trim().split(/\s+/);
+        return { note: note.toUpperCase(), duration: parseFloat(duration) };
+    }).filter(item => !isNaN(item.duration));
 }
 
-function playFrom(index) {
-  if (index >= scoreData.length || !isPlaying) {
-    isPlaying = false;
-    pauseTime = 0;
-    currentIndex = 0;
-    playPauseBtn.textContent = "⏵";
-    progressBar.value = 100;
-    currentTimeSpan.textContent = formatTime(scoreDuration);
-    return;
-  }
+playPauseBtn.addEventListener('click', () => {
+    if(!isPlaying){
+        isPlaying = true;
+        playPauseBtn.textContent = "⏸";
+        startTime = pauseTime > 0 ? audioContext.currentTime - pauseTime : audioContext.currentTime;
+        if(pauseTime===0) currentIndex=0;
+        playFrom(currentIndex);
+    } else {
+        isPlaying = false;
+        playPauseBtn.textContent = "⏵";
+        pauseTime = audioContext.currentTime - startTime;
+        clearTimeout(playTimer);
+    }
+});
 
-  const item = scoreData[index];
-  const frequency = NOTE_FREQUENCIES[item.note] || SILENCE_FREQUENCY;
+function playFrom(index){
+    if(index >= scoreData.length || !isPlaying){
+        isPlaying = false;
+        pauseTime = 0;
+        currentIndex = 0;
+        playPauseBtn.textContent = "⏵";
+        progressBar.value = 100;
+        currentTimeSpan.textContent = formatTime(scoreDuration);
+        return;
+    }
 
-  if (frequency > 0)
-    playTone(frequency, audioContext.currentTime, item.duration);
+    const item = scoreData[index];
+    const freq = NOTE_FREQUENCIES[item.note]?.[0] || SILENCE_FREQUENCY;
 
-  const elapsedTime = scoreData
-    .slice(0, index)
-    .reduce((sum, i) => sum + i.duration, 0);
-  currentTimeSpan.textContent = formatTime(elapsedTime);
-  progressBar.value = (elapsedTime / scoreDuration) * 100;
+    if(freq>0) playTone(freq, audioContext.currentTime, item.duration);
 
-  currentIndex = index + 1;
-  playTimer = setTimeout(() => playFrom(currentIndex), item.duration * 1000);
+    const elapsed = scoreData.slice(0,index).reduce((sum,i)=> sum+i.duration,0);
+    currentTimeSpan.textContent = formatTime(elapsed);
+    progressBar.value = (elapsed/scoreDuration)*100;
+
+    currentIndex = index+1;
+    playTimer = setTimeout(()=>playFrom(currentIndex), item.duration*1000);
 }
 
-function playTone(frequency, startTime, duration) {
-  const oscillator = audioContext.createOscillator();
-  const gainNode = audioContext.createGain();
+function playTone(freq, startTime, duration){
+    const osc = audioContext.createOscillator();
+    const gain = audioContext.createGain();
 
-  oscillator.type = "sawtooth";
-  oscillator.frequency.setValueAtTime(frequency, startTime);
+    osc.type = "sawtooth";
+    osc.frequency.setValueAtTime(freq, startTime);
 
-  gainNode.gain.setValueAtTime(0, startTime);
-  gainNode.gain.linearRampToValueAtTime(0.2, startTime + 0.01);
-  gainNode.gain.linearRampToValueAtTime(0.0001, startTime + duration);
+    gain.gain.setValueAtTime(0, startTime);
+    gain.gain.linearRampToValueAtTime(0.2, startTime+0.01);
+    gain.gain.linearRampToValueAtTime(0.0001, startTime+duration);
 
-  oscillator.connect(gainNode);
-  gainNode.connect(audioContext.destination);
+    osc.connect(gain);
+    gain.connect(audioContext.destination);
 
-  oscillator.start(startTime);
-  oscillator.stop(startTime + duration);
+    osc.start(startTime);
+    osc.stop(startTime+duration);
 }
 
-function formatTime(seconds) {
-  const min = Math.floor(seconds / 60);
-  const sec = Math.floor(seconds % 60);
-  return `${min}:${sec.toString().padStart(2, "0")}`;
+function formatTime(seconds){
+    const min = Math.floor(seconds/60);
+    const sec = Math.floor(seconds%60);
+    return `${min}:${sec.toString().padStart(2,"0")}`;
 }
