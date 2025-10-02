@@ -2,6 +2,9 @@ import MusicPlayer from "./player.js";
 const noteCount = document.querySelector("#noteCount");
 const noteCountBtn = document.querySelector("#noteCountBtn");
 const mp = new MusicPlayer();
+let notes = {}; 
+let tempo = 0;
+
 document.addEventListener(
   "click",
   () => {
@@ -9,34 +12,52 @@ document.addEventListener(
   },
   { once: true }
 );
-let notes = {}; //
-// Create random notes played when clicked play
-noteCountBtn.addEventListener("click", async () => {
-  for (let i = 0; i < noteCount.value; i++) {
+
+noteCountBtn.addEventListener('click', async() => {
+  if (noteCount.value <= 100) {
+    if (document.querySelector('#toManyNotesMsg')) {
+      document.querySelector('#toManyNotesMsg').remove();
+    }
+
+    for (let i = 0; i < noteCount.value; i++) {
     const note = await getRandomNote();
-    console.log(note, i);
-    mp.play(note, 1);
+    mp.play(note, tempo / 1000);
+    await new Promise(resolve => setTimeout(resolve, 500));
+    }
+  } else {
+    if (!document.querySelector('#toManyNotesMsg')) {
+      const message = document.createElement('p');
+      message.id = "toManyNotesMsg";
+      message.textContent = "Non non pas plus de 100 notes";
+      message.style.color = 'red';
+      document.querySelector('#musicGenerator').appendChild(message);
+    }
   }
 });
+
+// Charger le fichier JSON
+async function loadNotes() {
+  const response = await fetch("fichier.json");
+  if (!response.ok) {
+    throw new Error("Erreur lors du chargement de note.json");
+  }
+  notes = await response.json();
+  return notes; // <-- important
+};
 
 //Générer un nombre aléatoire
 const randomNbr = (max) => {
   return Math.floor(Math.random() * max);
 };
-async function loadNotes() {
-  const response = await fetch("./fichier.json");
-  notes = await response.json();
-  return notes; // <-- important
-}
+
+
 async function getRandomNote() {
   const notesObj = await loadNotes();
   const keys = Object.keys(notesObj);
-  console.log(randomNbr(keys.length));
-
-  const idx = randomNbr(keys.length);
-  const note = keys[idx].toString();
-
-  return note;
+  const idx = randomNbr(keys.length); 
+  const note = keys[idx].toString(); 
+  tempo = notesObj[note][1];
+  return  note 
 }
 
 // Assign piano keys to notes
