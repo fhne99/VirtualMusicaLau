@@ -116,6 +116,7 @@ fileInput.addEventListener('change', (event) => {
     const content = e.target.result;
     scoreData = parseScore(content);
 
+    // Vérification des notes
     const missingNote = scoreData.find(item => item.note !== '0' && !NOTE_FREQUENCIES[item.note]);
     if (missingNote) {
       message.textContent = `Erreur : La note ${missingNote.note} n'est pas définie.`;
@@ -124,12 +125,13 @@ fileInput.addEventListener('change', (event) => {
 
     scoreDuration = scoreData.reduce((sum, item) => sum + item.duration, 0);
 
-    playerDiv.style.display = "inline-block";
+    playerDiv.style.display = "flex";
     progressBar.value = 0;
     currentTimeSpan.textContent = "0:00";
     totalTimeSpan.textContent = formatTime(scoreDuration);
     currentIndex = 0;
     pauseTime = 0;
+    isPlaying = false;
     playPauseBtn.textContent = "⏵";
   };
   reader.readAsText(file);
