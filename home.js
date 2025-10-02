@@ -59,6 +59,45 @@ Array.from(document.getElementsByClassName("blackButtons")).forEach(
   }
 );
 
+// jouer les touches blanches du piano
+document.querySelectorAll(".white-key").forEach((key, i) => {
+  // Notes blanches sur 2 octaves (Do4 à Si5)
+  const notesBlanches = [
+    "C4",
+    "D4",
+    "E4",
+    "F4",
+    "G4",
+    "A4",
+    "B4",
+    "C5",
+    "D5",
+    "E5",
+    "F5",
+    "G5",
+    "A5",
+    "B5",
+    "C6",
+    "D6",
+    "E6",
+    "F6",
+    "G6",
+    "A6",
+    "B6",
+    "C7",
+    "D7",
+    "E7",
+    "F7",
+    "G7",
+    "A7",
+    "B7",
+  ];
+
+  key.addEventListener("click", () => {
+    mp.play(notesBlanches[i], 1);
+  });
+});
+
 // Import file to read tablatures
 const importBtn = document.getElementById("importBtn");
 const fileInput = document.getElementById("fileInput");

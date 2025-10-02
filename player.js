@@ -15,7 +15,7 @@ class MusicPlayer {
     }
   }
 
-  play(note, duration = 1, instrument = "sine") {
+  play(note, duration = 1, instrument = "round") {
     const frequency = notes[note];
     if (!frequency) {
       console.error(`Note ${note} inconnue`);
