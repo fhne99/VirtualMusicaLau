@@ -6,14 +6,13 @@
     <title>VirtualMusicLau</title>
     <link rel="stylesheet" type="text/css" href="home.css">
     <style>
-      .piano {
+       .piano {
         position: relative;
         display: flex;
         height: 200px;
         margin: 20px;
         border: 3px solid #333;
 
-        overflow-x: auto;
         white-space: nowrap;
       }
 
@@ -74,52 +73,77 @@
           inset 0 -2px 3px rgba(255, 255, 255, 0.1);
         transform: translateY(3px);
       }
+      .blackButtons.active {
+        background: #555;
+        color: white;
+        box-shadow: inset 0 3px 3px rgba(0, 0, 0, 0.5);
+      }
+      .white-key.active {
+        background: #555;
+        color: white;
+        box-shadow: inset 0 3px 3px rgba(0, 0, 0, 0.5);
+      }
 
       /* position des touches noires */
       .blackButtons[data-note="C#4"] {
-        left: 45px;
+        left: 40px;
       }
       .blackButtons[data-note="D#4"] {
-        left: 105px;
+        left: 100px;
       }
       .blackButtons[data-note="F#4"] {
-        left: 225px;
+        left: 220px;
       }
       .blackButtons[data-note="G#4"] {
-        left: 285px;
+        left: 280px;
       }
       .blackButtons[data-note="A#4"] {
-        left: 345px;
+        left: 340px;
       }
       .blackButtons[data-note="C#5"] {
-        left: 472px;
+        left: 457px;
       }
       .blackButtons[data-note="D#5"] {
-        left: 531px;
+        left: 513px;
       }
       .blackButtons[data-note="F#5"] {
-        left: 595px;
+        left: 625px;
       }
       .blackButtons[data-note="G#5"] {
-        left: 718px;
+        left: 685px;
       }
       .blackButtons[data-note="A#5"] {
-        left: 785px;
+        left: 745px;
       }
-      .blackButtons[data-note="A#5"] {
-        left: 785px;
+      .blackButtons[data-note="C#6"] {
+        left: 868px;
       }
-      .blackButtons[data-note="A#5"] {
-        left: 785px;
+      .blackButtons[data-note="D#6"] {
+        left: 925px;
       }
-      .blackButtons[data-note="A#5"] {
-        left: 785px;
+      .blackButtons[data-note="F#6"] {
+        left: 1035px;
       }
-      .blackButtons[data-note="A#5"] {
-        left: 785px;
+      .blackButtons[data-note="G#6"] {
+        left: 1095px;
       }
-      .blackButtons[data-note="A#5"] {
-        left: 785px;
+      .blackButtons[data-note="A#6"] {
+        left: 1164px;
+      }
+       .blackButtons[data-note="C#7"] {
+        left: 1279px;
+      }
+      .blackButtons[data-note="D#7"] {
+        left: 1338px;
+      }
+      .blackButtons[data-note="F#7"] {
+        left: 1455px;
+      }
+      .blackButtons[data-note="G#7"] {
+        left: 1510px;
+      }
+      .blackButtons[data-note="A#7"] {
+        left: 1571px;
       }
     </style>
   </head>
