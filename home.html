@@ -5,9 +5,17 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>VirtualMusicLau</title>
     <style>
+ 
+
       .piano {
-        display: flex;
         position: relative;
+        display: flex;
+        height: 200px;
+        margin: 20px;
+        border: 3px solid #333;
+
+        overflow-x: auto;
+        white-space: nowrap;
       }
 
       /* touches blanches */
@@ -28,7 +36,7 @@
         box-shadow: 0 3px 5px rgba(0, 0, 0, 0.7),
           inset 0 -4px 6px rgba(255, 255, 255, 0.05),
           inset 0 4px 6px rgba(0, 0, 0, 0.5);
-        transition: all 0.1s ease-in-out; 
+        transition: all 0.1s ease-in-out;
       }
       .white-key:active {
         background: linear-gradient(
@@ -102,37 +110,38 @@
     </style>
   </head>
   <body>
-    <div class="piano">
-      <!-- 2 octaves = 10 touches noires -->
-      <button class="blackButtons" data-note="C#">Do#/Ré♭</button>
-      <button class="blackButtons" data-note="D#">Ré#/Mi♭</button>
-      <button class="blackButtons" data-note="F#">Fa#/Sol♭</button>
-      <button class="blackButtons" data-note="G#">Sol#/La♭</button>
-      <button class="blackButtons" data-note="A#">La#/Si♭</button>
+      <div class="piano">
+        <!-- 2 octaves = 10 touches noires -->
+        <button class="blackButtons" data-note="C#">Do#/Ré♭</button>
+        <button class="blackButtons" data-note="D#">Ré#/Mi♭</button>
+        <button class="blackButtons" data-note="F#">Fa#/Sol♭</button>
+        <button class="blackButtons" data-note="G#">Sol#/La♭</button>
+        <button class="blackButtons" data-note="A#">La#/Si♭</button>
 
-      <button class="blackButtons" data-note="C#2">Do#/Ré♭</button>
-      <button class="blackButtons" data-note="D#2">Ré#/Mi♭</button>
-      <button class="blackButtons" data-note="F#2">Fa#/Sol♭</button>
-      <button class="blackButtons" data-note="G#2">Sol#/La♭</button>
-      <button class="blackButtons" data-note="A#2">La#/Si♭</button>
+        <button class="blackButtons" data-note="C#2">Do#/Ré♭</button>
+        <button class="blackButtons" data-note="D#2">Ré#/Mi♭</button>
+        <button class="blackButtons" data-note="F#2">Fa#/Sol♭</button>
+        <button class="blackButtons" data-note="G#2">Sol#/La♭</button>
+        <button class="blackButtons" data-note="A#2">La#/Si♭</button>
 
-      <!-- 2 octaves = 14 touches blanches -->
-      <div class="white-key">Do</div>
-      <div class="white-key">Ré</div>
-      <div class="white-key">Mi</div>
-      <div class="white-key">Fa</div>
-      <div class="white-key">Sol</div>
-      <div class="white-key">La</div>
-      <div class="white-key">Si</div>
+        <!-- 2 octaves = 14 touches blanches -->
+        <div class="white-key">Do</div>
+        <div class="white-key">Ré</div>
+        <div class="white-key">Mi</div>
+        <div class="white-key">Fa</div>
+        <div class="white-key">Sol</div>
+        <div class="white-key">La</div>
+        <div class="white-key">Si</div>
 
-      <div class="white-key">Do</div>
-      <div class="white-key">Ré</div>
-      <div class="white-key">Mi</div>
-      <div class="white-key">Fa</div>
-      <div class="white-key">Sol</div>
-      <div class="white-key">La</div>
-      <div class="white-key">Si</div>
-    </div>
+        <div class="white-key">Do</div>
+        <div class="white-key">Ré</div>
+        <div class="white-key">Mi</div>
+        <div class="white-key">Fa</div>
+        <div class="white-key">Sol</div>
+        <div class="white-key">La</div>
+        <div class="white-key">Si</div>
+      </div>
+   
 
     <h2>Générateur de séquence musicale</h2>
     <div style="margin-bottom: 20px">
