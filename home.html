@@ -6,6 +6,28 @@
     <title>VirtualMusicLau</title>
     <link rel="stylesheet" type="text/css" href="home.css">
     <style>
+         body {
+        margin: 0;
+        padding: 0;
+        font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+        background: linear-gradient(135deg, #1e1e2f, #252545, #12121c);
+        color: #f4f4f4;
+        text-align: center;
+      }
+        h1 {
+        margin: 20px 0;
+        font-size: 2.8rem;
+        font-weight: bold;
+        color: #ffcc00;
+        text-shadow: 2px 2px 8px rgba(0,0,0,0.7);
+        letter-spacing: 2px;
+      }
+        h2 {
+        margin-top: 40px;
+        font-size: 1.8rem;
+        color: #00e6e6;
+        text-shadow: 1px 1px 5px rgba(0,0,0,0.6);
+      }
        .piano {
         position: relative;
         display: flex;
@@ -20,6 +42,7 @@
       .white-key {
         width: 60px;
         height: 200px;
+        color:black;
         background: linear-gradient(to bottom, #fff, #eee);
         border: 1px solid black;
         border-radius: 0 0 5px 5px;
@@ -50,6 +73,7 @@
       .blackButtons {
         width: 40px;
         height: 120px;
+
         background: linear-gradient(to bottom, #111, #000);
         position: absolute;
         top: 0;
@@ -61,7 +85,7 @@
         justify-content: center;
         align-items: flex-end;
         padding-bottom: 5px;
-        font-size: 12px;
+        font-size: 9px;
         box-shadow: 0 3px 5px rgba(0, 0, 0, 0.7),
           inset 0 -4px 6px rgba(255, 255, 255, 0.05),
           inset 0 4px 6px rgba(0, 0, 0, 0.5);
@@ -148,6 +172,14 @@
     </style>
   </head>
   <body>
+     <h1>🎹 VirtualMusicLau 🎶</h1>
+     <h3>🎼 Guide clavier </h3>
+    <p>
+      Touches <strong>A Z E R T Y U</strong> → Octave 4 (Do4 → Si4)<br>
+      Touches <strong>W X C V B N ,</strong> → Octave 5 (Do5 → Si5)<br>
+      Touches <strong>é "  &#40; - è</strong> → Notes dièses (#) octave 4 <br>
+      Touches <strong>s d g h j</strong> → Notes dièses (#) octave 5
+    </p>
     <div class="piano">
       <button class="blackButtons" data-note="C#4">Do#/Ré♭</button>
       <button class="blackButtons" data-note="D#4">Ré#/Mi♭</button>
@@ -189,20 +221,20 @@
       <div class="white-key" data-note="B5">Si</div>
 
       <div class="white-key" data-note="C6">Do</div>
-      <div class="white-key">Ré</div>
-      <div class="white-key">Mi</div>
-      <div class="white-key">Fa</div>
-      <div class="white-key">Sol</div>
-      <div class="white-key">La</div>
-      <div class="white-key">Si</div>
+      <div class="white-key" data-note="D6">Ré</div>
+      <div class="white-key" data-note="E6">Mi</div>
+      <div class="white-key" data-note="F6">Fa</div>
+      <div class="white-key" data-note="G6">Sol</div>
+      <div class="white-key" data-note="A6">La</div>
+      <div class="white-key" data-note="B6">Si</div>
 
-      <div class="white-key">Do</div>
-      <div class="white-key">Ré</div>
-      <div class="white-key">Mi</div>
-      <div class="white-key">Fa</div>
-      <div class="white-key">Sol</div>
-      <div class="white-key">La</div>
-      <div class="white-key">Si</div>
+      <div class="white-key" data-note="C7">Do</div>
+      <div class="white-key" data-note="D7">Ré</div>
+      <div class="white-key" data-note="E7">Mi</div>
+      <div class="white-key" data-note="F7">Fa</div>
+      <div class="white-key" data-note="G7">Sol</div>
+      <div class="white-key" data-note="A7">La</div>
+      <div class="white-key" data-note="B7">Si</div>
     </div>
 
     <h2>Générateur de séquence musicale</h2>
