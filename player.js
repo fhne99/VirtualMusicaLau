@@ -6,7 +6,7 @@ async function loadNotes() {
   notes = await response.json();
 }
 
-class MusicPlayer {
+class MusicPlayer { 
   constructor() {
     this.audioCtx = new (window.AudioContext || window.webkitAudioContext)();
     if (Object.keys(notes).length === 0) {
@@ -16,7 +16,7 @@ class MusicPlayer {
   }
 
   play(note, duration = 1, instrument = "sine") {
-    const frequency = notes[note];
+    const frequency = notes[note][0];
     if (!frequency) {
       console.error(`Note ${note} inconnue`);
       return;

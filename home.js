@@ -1,16 +1,29 @@
-
 import MusicPlayer from "./player.js";
 const noteCount = document.querySelector('#noteCount');
 const noteCountBtn = document.querySelector('#noteCountBtn');
 const mp = new MusicPlayer();
+let tempo = 0;
 
 noteCountBtn.addEventListener('click', async() => {
-    for (let i = 0; i < noteCount.value; i++) {
-        const note = await getRandomNote();
-        console.log(note, i)
-        mp.play(note, 1);
+  if (noteCount.value <= 100) {
+    if (document.querySelector('#toManyNotesMsg')) {
+      document.querySelector('#toManyNotesMsg').remove();
     }
 
+    for (let i = 0; i < noteCount.value; i++) {
+    const note = await getRandomNote();
+    mp.play(note, tempo / 1000);
+    await new Promise(resolve => setTimeout(resolve, 500));
+    }
+  } else {
+    if (!document.querySelector('#toManyNotesMsg')) {
+      const message = document.createElement('p');
+      message.id = "toManyNotesMsg";
+      message.textContent = "Non non pas plus de 100 notes";
+      message.style.color = 'red';
+      document.querySelector('#musicGenerator').appendChild(message);
+    }
+  }
 });
 
 // Charger le fichier JSON
@@ -30,13 +43,10 @@ const randomNbr = (max) => {
 async function getRandomNote() {
   const notesObj = await loadNotes();
   const keys = Object.keys(notesObj);
-console.log(randomNbr(keys.length));
-
-   
   const idx = randomNbr(keys.length); 
-  const note = keys[idx].toString();            
-  
-  return  note ; 
+  const note = keys[idx].toString(); 
+  tempo = notesObj[note][1];
+  return  note 
 }
 
 
