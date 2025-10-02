@@ -69,6 +69,19 @@ Array.from(document.getElementsByClassName("blackButtons")).forEach((btn, i) => 
   });
 });
 
+// jouer les touches blanches du piano
+document.querySelectorAll(".white-key").forEach((key, i) => {
+  // Notes blanches sur 2 octaves (Do4 à Si5)
+  const notesBlanches = [
+    "C4", "D4", "E4", "F4", "G4", "A4", "B4",
+    "C5", "D5", "E5", "F5", "G5", "A5", "B5",
+  ];
+
+  key.addEventListener("click", () => {
+    mp.play(notesBlanches[i], 1); 
+  });
+});
+
 const importBtn = document.getElementById('importBtn');
 const fileInput = document.getElementById('fileInput');
 const message = document.getElementById('message');
