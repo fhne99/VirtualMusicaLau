@@ -4,6 +4,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>VirtualMusicLau</title>
+    <link rel="stylesheet" type="text/css" href="home.css">
     <style>
       .piano {
         position: relative;
@@ -190,6 +191,7 @@
     <button id="importBtn">Importer une partition</button>
     <input type="file" id="fileInput" accept=".txt" style="display: none" />
     <p id="message"></p>
+    <div class="music-player" id="player">
     <div id="player" style="display: none; margin-top: 20px">
       <button id="playPauseBtn">⏵</button>
       <span id="currentTime">0:00</span> / <span id="totalTime">0:00</span>
