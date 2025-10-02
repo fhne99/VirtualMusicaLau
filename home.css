@@ -1,0 +1,89 @@
+#player{
+  display:none;
+}
+
+
+
+#importBtn {
+  padding: 10px 20px;
+  font-size: 14px;
+  background: #ff6b6b;
+  border: none;
+  color: white;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background 0.3s ease;
+  margin-bottom: 15px;
+}
+
+#importBtn:hover {
+  background: #ff4b4b;
+}
+
+#message {
+  color: #cc0000;
+  font-size: 13px;
+  margin-bottom: 10px;
+  min-height: 18px;
+  text-align: center;
+}
+
+.music-player {
+  display: none;
+  background: #fff;
+  border-radius: 15px;
+  box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+  padding: 15px 20px;
+  width: 350px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 15px;
+}
+
+#playPauseBtn {
+  font-size: 24px;
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  border: none;
+  background: #ff6b6b;
+  color: white;
+  cursor: pointer;
+  transition: background 0.3s ease, transform 0.2s ease;
+  margin-bottom: 10px;
+}
+
+#playPauseBtn:hover {
+  background: #ff4b4b;
+  transform: scale(1.05);
+}
+
+.time-display {
+  font-size: 14px;
+  color: #555;
+  margin-bottom: 10px;
+  display: flex;
+  justify-content: center;
+}
+
+#progressBar {
+  width: 100%;
+  height: 8px;
+  appearance: none;
+  border-radius: 4px;
+  overflow: hidden;
+  cursor: pointer;
+}
+
+#progressBar::-webkit-progress-bar {
+  background: #eee;
+}
+
+#progressBar::-webkit-progress-value {
+  background: #ff6b6b;
+}
+
+#progressBar::-moz-progress-bar {
+  background: #ff6b6b;
+}
