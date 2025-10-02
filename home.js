@@ -156,7 +156,7 @@ const clavierToNote = {
   // Octave 4 Dièse et bémol
   é: "C#4",
   '"': "D#4",
-  "c": "F#4", // ← remplacé "(" par "c" pour éviter souci
+  "(": "F#4",
   "-": "G#4",
   è: "A#4",
 
@@ -166,39 +166,7 @@ const clavierToNote = {
   g: "F#5",
   h: "G#5",
   j: "A#5",
-
-  // Octave 6
-  J: "D6",
-  p: "E6",
-  q: "F6",
-  m: "G6",
-  l: "A6",
-  k: "B6",
-
-  // Octave 6 Dièse et bémol
-  1: "C#6",
-  2: "D#6",
-  3: "F#6",
-  4: "G#6",
-  5: "A#6",
-
-  // Octave 7
-  "!": "C7",
-  "@": "D7",
-  "#": "E7",
-  "$": "F7",
-  "%": "G7",
-  "^": "A7",
-  "&": "B7",
-
-  // Octave 7 Dièse et bémol
-  6: "C#7",
-  7: "D#7",
-  8: "F#7",
-  9: "G#7",
-  0: "A#7",
 };
-
 
 const activeNotes = {};
 
