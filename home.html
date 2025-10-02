@@ -11,22 +11,22 @@
       }
 
       .white-key {
-        width: 40px;       
-        height: 200px;     
+        width: 40px;
+        height: 200px;
         background: white;
         border: 1px solid black;
         border-radius: 0 0 5px 5px;
         box-shadow: 0 5px 5px rgba(0,0,0,0.3);
-        margin-right: 2px; 
+        margin-right: 2px;
         position: relative;
         z-index: 1;
         cursor: pointer;
       }
-    
+
       .white-key:last-child {
         margin-right: 0;
       }
-    
+
       .white-key:active {
         background: #ccc;
         box-shadow: inset 0 5px 5px rgba(0,0,0,0.3);
@@ -52,8 +52,8 @@
               <button class="blackButtons">Sol#/La♭</button>
               <button class="blackButtons">La#/Si♭</button>
           </div>
-      </div> 
-    </div> 
+      </div>
+    </div>
     <div class="piano">
       <!-- 2 octaves = 14 touches blanches -->
       <div class="white-key" >Do</div>
@@ -71,8 +71,8 @@
       <div class="white-key" >Sol</div>
       <div class="white-key" >La</div>
       <div class="white-key" >Si</div>
-    </div> 
-  
+    </div>
+
 
     <h2>Générateur de séquence musicale</h2>
     <div style="margin-bottom: 20px;">
@@ -80,14 +80,15 @@
       <input id="noteCount" name="noteCount" type="number" min="1" max="100">
       <button id="noteCountBtn">Jouer</button>
     </div>
-  
-    <div>
-      <button id="importBtn">Importer une partition</button>
-      <input type="file" id="fileInput" accept=".txt" style="display:none">
-      <p id="message"></p>
-    </div>   
 
+    <button id="importBtn">Importer une partition</button>
+    <input type="file" id="fileInput" accept=".txt" style="display:none">
+    <p id="message"></p>
+    <div id="player" style="display:none; margin-top: 20px;">
+      <button id="playPauseBtn">⏵</button>
+      <span id="currentTime">0:00</span> / <span id="totalTime">0:00</span>
+      <progress id="progressBar" value="0" max="100" style="width: 300px; cursor:pointer;"></progress>
+    </div>
     <script type="module" src="home.js"></script>
   </body>
 </html>
- 
