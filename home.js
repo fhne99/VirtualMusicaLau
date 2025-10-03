@@ -269,7 +269,7 @@ fileInput.addEventListener("change", (e) => {
 
     scoreDuration = scoreData.reduce((sum, item) => sum + item.duration, 0);
 
-    playerDiv.style.display = "flex";
+    playerDiv.id = "playerVisible";
     progressBar.value = 0;
     currentTimeSpan.textContent = "0:00";
     totalTimeSpan.textContent = formatTime(scoreDuration);
