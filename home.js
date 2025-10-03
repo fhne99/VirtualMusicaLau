@@ -339,21 +339,21 @@ function playFrom(index){
         currentIndex = 0;
         playPauseBtn.textContent = "⏵";
         progressBar.value = 100;
-        currentTimeSpan.textContent = formatTime(scoreDuration);
+        currentTimeSpan.textContent = formatTime(scoreDuration / playSpeed); 
         return;
     }
 
     const item = scoreData[index];
     const freq = NOTE_FREQUENCIES[item.note]?.[0] || SILENCE_FREQUENCY;
 
-    if(freq>0) playTone(freq, audioContext.currentTime, item.duration);
+    if(freq > 0) playTone(freq, audioContext.currentTime, item.duration / playSpeed); 
 
-    const elapsed = scoreData.slice(0,index).reduce((sum,i)=> sum+i.duration,0);
+    const elapsed = scoreData.slice(0,index).reduce((sum,i)=> sum + i.duration,0) / playSpeed;
     currentTimeSpan.textContent = formatTime(elapsed);
-    progressBar.value = (elapsed/scoreDuration)*100;
+    progressBar.value = (elapsed / (scoreDuration / playSpeed)) * 100;
 
     currentIndex = index+1;
-    playTimer = setTimeout(()=>playFrom(currentIndex), item.duration*1000);
+    playTimer = setTimeout(()=>playFrom(currentIndex), (item.duration / playSpeed) * 1000); 
 }
 
 function playTone(freq, startTime, duration){
@@ -405,6 +405,9 @@ function recordNote(note) {
 const startBtn = document.getElementById("start");
 const stopBtn = document.getElementById("stop");
 const downloadBtn = document.getElementById("downloadBtn");
+const speedSelect = document.getElementById("speedSelect");
+
+let playSpeed = 1;
 
 startBtn.addEventListener("click", () => {
   recordedNotes = [];
@@ -439,4 +442,8 @@ downloadBtn.addEventListener("click", () => {
   a.click();
 
   URL.revokeObjectURL(url);
+});
+
+speedSelect.addEventListener("change", (e) => {
+  playSpeed = parseInt(e.target.value) / 1000; 
 });

@@ -169,6 +169,31 @@
       .blackButtons[data-note="A#7"] {
         left: 1571px;
       }
+
+      #speedSelect {
+  color: rgb(255, 75, 75);     /* couleur du texte */
+  background-color: white;   /* fond sombre pour contraste */
+  font-size: 0.75rem;       /* plus petit texte */
+  padding: 2px 6px;         /* espace réduit */
+  width: 50px;  
+  height: 30px;            /* largeur réduite */          /* réduit l’espace intérieur */
+  border: 1px solid #ff4b4b;   /* bordure rouge assortie */
+  border-radius: 10px;          /* arrondir les coins */
+  outline: none;               /* enlever contour bleu par défaut */
+  cursor: pointer;             /* curseur main au survol */
+  transition: all 0.2s ease-in-out;
+  margin-right: 2px;
+}
+
+#speedSelect:hover {
+  background-color: #2a2a40;   /* éclaircir un peu au survol */
+}
+
+#speedSelect option {
+  background-color: #1e1e2f;   /* fond pour les options */
+  color: white;                /* texte en blanc */
+}
+
     </style>
   </head>
   <body>
@@ -243,9 +268,9 @@
     <div id="musicGenerator" style="margin-bottom: 20px;">
       <label for="noteCount">Nombre de notes à jouer </label>
       <input id="noteCount" name="noteCount" type="number" min="1" max="100" />
-      <label for="tempo">Choisi un rythme:</label>
+      <label for="tempo">Vitesse:</label>
       <select id="tempo">
-        <option value="500">500 ms</option>
+        <option value="500" selected>500 ms</option>
         <option value="1000">1000 ms</option>
         <option value="2000">2000 ms</option>
         <option value="random">Rythme aléatoire</option>
@@ -258,6 +283,12 @@
   <p id="message"></p>
 
   <div id="player">
+    <select id="speedSelect" style="color: rgb(255, 75, 75);" >
+        <option value="500">0.5x</option>
+        <option value="1000" selected>1x</option>
+        <option value="1500">1.5x</option>
+        <option value="2000">2x</option>
+    </select>
     <button id="playPauseBtn">⏵</button>
     <span id="currentTime">0:00</span> / <span id="totalTime">0:00</span>
     <progress id="progressBar" value="0" max="100"></progress>
