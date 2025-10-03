@@ -26,13 +26,13 @@ noteCountBtn.addEventListener("click", async () => {
       if (tempoSelect.value === "random") {
         const duration = tempo / 1000;
         mp.play(note, duration);
-        await new Promise((resolve) => setTimeout(resolve, tempo)); 
+        await new Promise((resolve) => setTimeout(resolve, tempo));
       } else {
         const fixedTempo = parseInt(tempoSelect.value);
         const duration = fixedTempo / 1000;
         mp.play(note, duration);
         await new Promise((resolve) => setTimeout(resolve, fixedTempo));
-      }  
+      }
     }
   } else {
     if (!document.querySelector("#toManyNotesMsg")) {
@@ -324,68 +324,72 @@ function parseScore(content) {
     .filter((item) => !isNaN(item.duration));
 }
 
-playPauseBtn.addEventListener('click', () => {
-    if(!isPlaying){
-        isPlaying = true;
-        playPauseBtn.textContent = "⏸";
-        startTime = pauseTime > 0 ? audioContext.currentTime - pauseTime : audioContext.currentTime;
-        if(pauseTime===0) currentIndex=0;
-        playFrom(currentIndex);
-    } else {
-        isPlaying = false;
-        playPauseBtn.textContent = "⏵";
-        pauseTime = audioContext.currentTime - startTime;
-        clearTimeout(playTimer);
-    }
+playPauseBtn.addEventListener("click", () => {
+  if (!isPlaying) {
+    isPlaying = true;
+    playPauseBtn.textContent = "⏸";
+    startTime =
+      pauseTime > 0
+        ? audioContext.currentTime - pauseTime
+        : audioContext.currentTime;
+    if (pauseTime === 0) currentIndex = 0;
+    playFrom(currentIndex);
+  } else {
+    isPlaying = false;
+    playPauseBtn.textContent = "⏵";
+    pauseTime = audioContext.currentTime - startTime;
+    clearTimeout(playTimer);
+  }
 });
 
-function playFrom(index){
-    if(index >= scoreData.length || !isPlaying){
-        isPlaying = false;
-        pauseTime = 0;
-        currentIndex = 0;
-        playPauseBtn.textContent = "⏵";
-        progressBar.value = 100;
-        currentTimeSpan.textContent = formatTime(scoreDuration / playSpeed); 
-        return;
-    }
+function playFrom(index) {
+  if (index >= scoreData.length || !isPlaying) {
+    isPlaying = false;
+    pauseTime = 0;
+    currentIndex = 0;
+    playPauseBtn.textContent = "⏵";
+    progressBar.value = 100;
+    currentTimeSpan.textContent = formatTime(scoreDuration / playSpeed);
+    return;
+  }
 
-    const item = scoreData[index];
-    const freq = NOTE_FREQUENCIES[item.note]?.[0] || SILENCE_FREQUENCY;
+  const item = scoreData[index];
+  const freq = NOTE_FREQUENCIES[item.note]?.[0] || SILENCE_FREQUENCY;
 
-    if(freq > 0) playTone(freq, audioContext.currentTime, item.duration / playSpeed); 
+  if (freq > 0)
+    playTone(freq, audioContext.currentTime, item.duration / playSpeed);
 
-    const elapsed = scoreData.slice(0,index).reduce((sum,i)=> sum + i.duration,0) / playSpeed;
-    currentTimeSpan.textContent = formatTime(elapsed);
-    progressBar.value = (elapsed / (scoreDuration / playSpeed)) * 100;
+  const elapsed =
+    scoreData.slice(0, index).reduce((sum, i) => sum + i.duration, 0) /
+    playSpeed;
+  currentTimeSpan.textContent = formatTime(elapsed);
+  progressBar.value = (elapsed / (scoreDuration / playSpeed)) * 100;
 
-    currentIndex = index+1;
-    playTimer = setTimeout(()=>playFrom(currentIndex), (item.duration / playSpeed) * 1000); 
+  currentIndex = index + 1;
+  playTimer = setTimeout(
+    () => playFrom(currentIndex),
+    (item.duration / playSpeed) * 1000
+  );
 }
 
-function playTone(freq, startTime, duration){
-    const osc = audioContext.createOscillator();
-    const gain = audioContext.createGain();
+function playTone(freq, startTime, duration) {
+  const osc = audioContext.createOscillator();
+  const gain = audioContext.createGain();
 
-    osc.type = "sawtooth";
-    osc.frequency.setValueAtTime(freq, startTime);
+  osc.type = "sawtooth";
+  osc.frequency.setValueAtTime(freq, startTime);
 
-    gain.gain.setValueAtTime(0, startTime);
-    gain.gain.linearRampToValueAtTime(0.2, startTime+0.01);
-    gain.gain.linearRampToValueAtTime(0.0001, startTime+duration);
+  gain.gain.setValueAtTime(0, startTime);
+  gain.gain.linearRampToValueAtTime(0.2, startTime + 0.01);
+  gain.gain.linearRampToValueAtTime(0.0001, startTime + duration);
 
-    osc.connect(gain);
-    gain.connect(audioContext.destination);
+  osc.connect(gain);
+  gain.connect(audioContext.destination);
 
-    osc.start(startTime);
-    osc.stop(startTime+duration);
+  osc.start(startTime);
+  osc.stop(startTime + duration);
 }
 
-function formatTime(seconds){
-    const min = Math.floor(seconds/60);
-    const sec = Math.floor(seconds%60);
-    return `${min}:${sec.toString().padStart(2,"0")}`;
-}
 // Enregistrement
 let isRecording = false;
 let recordedNotes = [];
@@ -449,25 +453,7 @@ downloadBtn.addEventListener("click", () => {
 
   currentIndex = index + 1;
   playTimer = setTimeout(() => playFrom(currentIndex), item.duration * 1000);
-}
-
-function playTone(freq, startTime, duration) {
-  const osc = audioContext.createOscillator();
-  const gain = audioContext.createGain();
-
-  osc.type = "sawtooth";
-  osc.frequency.setValueAtTime(freq, startTime);
-
-  gain.gain.setValueAtTime(0, startTime);
-  gain.gain.linearRampToValueAtTime(0.2, startTime + 0.01);
-  gain.gain.linearRampToValueAtTime(0.0001, startTime + duration);
-
-  osc.connect(gain);
-  gain.connect(audioContext.destination);
-
-  osc.start(startTime);
-  osc.stop(startTime + duration);
-}
+});
 
 function formatTime(seconds) {
   const min = Math.floor(seconds / 60);
@@ -604,11 +590,10 @@ stopRecBtn.addEventListener("click", async () => {
 });
 
 speedSelect.addEventListener("change", (e) => {
-  playSpeed = parseInt(e.target.value) / 1000; 
+  playSpeed = parseInt(e.target.value) / 1000;
 });
-  a.remove();
-  setTimeout(() => URL.revokeObjectURL(url), 2000);
+a.remove();
+setTimeout(() => URL.revokeObjectURL(url), 2000);
 
-  startRecBtn.disabled = false;
-  stopRecBtn.disabled = true;
-});
+startRecBtn.disabled = false;
+stopRecBtn.disabled = true;
