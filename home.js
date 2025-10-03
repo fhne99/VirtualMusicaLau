@@ -485,11 +485,11 @@ stopRecBtn.addEventListener("click", async () => {
   if (window.showSaveFilePicker) {
     try {
       const handle = await window.showSaveFilePicker({
-        suggestedName: "piano_recording.webm",
+        suggestedName: "piano_recording.mp3",
         types: [
           {
             description: "Enregistrement audio",
-            accept: { "audio/webm": [".webm"] },
+            accept: { "audio/mp3": [".mp3"] },
           },
         ],
       });
@@ -507,9 +507,9 @@ stopRecBtn.addEventListener("click", async () => {
   // 🔹 Fallback : création d'un lien temporaire
   const filename =
     prompt(
-      "Nom du fichier (ex : piano_recording.webm)",
-      "piano_recording.webm"
-    ) || "piano_recording.webm";
+      "Nom du fichier (ex : piano_recording.mp3)",
+      "piano_recording.mp3"
+    ) || "piano_recording.mp3";
 
   const url = URL.createObjectURL(blob);
   const a = document.createElement("a");
