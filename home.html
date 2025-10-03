@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>VirtualMusicLau</title>
     <link rel="stylesheet" type="text/css" href="home.css" />
-    <style>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"/>        <style>
       body {
         margin: 0;
         padding: 0;
@@ -289,7 +289,7 @@
   background-color: white;   /* fond sombre pour contraste */
   font-size: 0.75rem;       /* plus petit texte */
   padding: 2px 6px;         /* espace réduit */
-  width: 50px;  
+  width: 50px;
   height: 30px;            /* largeur réduite */          /* réduit l’espace intérieur */
   border: 1px solid #ff4b4b;   /* bordure rouge assortie */
   border-radius: 10px;          /* arrondir les coins */
@@ -392,23 +392,49 @@
       <div class="note note6">La</div>
     </div>
 
-    <div>
-      <button class="enregister" id="start">
-        Démarrer l'enregistrement pour avoir la partition
-      </button>
-      <button class="enregister" id="stop">
-        Arreter l'enregistrement pour avoir la partition
-      </button>
-      <button id="downloadBtn">Télécharger ma partition</button>
+    <h2 class="section-info">Créez votre propre partition</h2>
+
+    <div class="button-row">
+      <div class="button-container">
+        <button id="start" class="button-icon">
+          <i class="fa-solid fa-circle-dot"></i>
+        </button>
+          <span class="btn-label">Enregistrer</span>
+      </div>
+
+      <div class="button-container">
+        <button id="stop" class="button-icon">
+          <i class="fa-solid fa-square"></i>
+        </button>
+        <span class="btn-label">Stopper</span>
+      </div>
+
+      <div class="button-container">
+        <button id="downloadBtn" class="button-icon">
+          <i class="fa-solid fa-download"></i>
+        </button>
+        <span class="btn-label">Télécharger</span>
+      </div>
     </div>
 
-    <div>
-      <button id="startRec">🎙️ Démarrer enregistrement audio</button>
-      <button id="stopRec" disabled>⏹️ Stop</button>
-      <a id="downloadLink" style="display: none"
-        >Télécharger l’enregistrement</a
-      >
+    <h2 class="section-info">Enregistrez votre propre son</h2>
+
+    <div class="button-row">
+      <div class="button-container">
+        <button id="startRec" class="button-icon">
+          <i class="fa-solid fa-microphone"></i>
+        </button>
+        <span class="btn-label">Enregistrer</span>
+      </div>
+
+      <div class="button-container">
+        <button id="stopRec" class="button-icon" disabled>
+          <i class="fa-solid fa-stop"></i>
+        </button>
+        <span class="btn-label">Stopper</span>
+      </div>
     </div>
+  </div>
 
     <h2>Générateur de séquence musicale</h2>
     <div id="musicGenerator" style="margin-bottom: 20px">
