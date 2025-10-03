@@ -405,3 +405,58 @@ selectInstrument.addEventListener("change", function () {
     pianoDiv.style.display = "flex";
   }
 });
+
+// creation des sons synthé flûte
+let flutesonLike;
+let holesflute;   // Déclaré globalement
+const notesflute = ["C4", "D4", "E4", "F4", "G4", "A4", "B4", "C5"];
+
+document.addEventListener("DOMContentLoaded", () => {
+  // Crée le synthé flûte
+  flutesonLike = new Tone.DuoSynth({
+    voice0: { oscillator: { type: "triangle",detune:10 }, envelope: { attack: 0.4,decay:0.1,sustain:0.7, release: 1.5 } },
+    voice1: { oscillator: { type: "sawtooth",detune:-10 }, envelope: { attack: 0.5,decay:0.1,sustain:0.6, release: 1.5 } },
+    harmonicity: 1.2,
+    volume: -8
+  }).toDestination();
+
+  // Réverb
+  const reverb = new Tone.Reverb({ decay: 4, wet: 0.4 }).toDestination();
+  flutesonLike.connect(reverb);
+
+  
+
+  // Récupère tous les trous
+  holesflute = document.querySelectorAll(".hole");
+
+  // Clic sur chaque trou
+  holesflute.forEach((hole, i) => {
+    hole.addEventListener("click", async () => {
+      await Tone.start();
+      flutesonLike.triggerAttackRelease(notesflute[i], "4n");
+
+      // Illuminer le trou
+      hole.classList.add("active");
+      setTimeout(() => hole.classList.remove("active"), 400);
+    });
+  });
+});
+
+// 🎹 Jouer avec clavier
+const keyMap = { a:0, z:1, e:2, r:3, t:4, y:5, u:6, i:7 };
+
+document.addEventListener("keydown", async (e) => {
+  const index = keyMap[e.key.toLowerCase()];
+  if (index !== undefined && holesflute) {
+    await Tone.start();
+    flutesonLike.triggerAttackRelease(notesflute[index], "4n");
+
+    // Illuminer le trou correspondant
+    const hole = holesflute[index];
+    if (hole) {
+      hole.classList.add("active");
+      setTimeout(() => hole.classList.remove("active"), 400);
+    }
+  }
+});
+
