@@ -15,13 +15,30 @@ document.addEventListener(
   { once: true }
 );
 
+let funMessage;
+
 noteCountBtn.addEventListener("click", async () => {
+  noteCountBtn.disabled = true;
   if (noteCount.value <= 100) {
     if (document.querySelector("#toManyNotesMsg")) {
       document.querySelector("#toManyNotesMsg").remove();
     }
 
+    if (funMessage) funMessage.remove();
+
     for (let i = 0; i < noteCount.value; i++) {
+      if (i === 74) {
+        const hiddenButton = document.createElement('button');
+        hiddenButton.textContent = '🎉 Clique-moi !';
+        document.querySelector("#musicGenerator").appendChild(hiddenButton);
+        hiddenButton.addEventListener('click', () => {
+          hiddenButton.remove();
+            funMessage = document.createElement('p');
+            funMessage.textContent = '👀 Bientôt dispo.. reste branché !';
+            funMessage.style="font-size: 24px; font-weight: bold;"
+            document.querySelector("#musicGenerator").appendChild(funMessage);
+        });
+      }
       const note = await getRandomNote();
       if (tempoSelect.value === "random") {
         const duration = tempo / 1000;
@@ -39,10 +56,11 @@ noteCountBtn.addEventListener("click", async () => {
       const message = document.createElement("p");
       message.id = "toManyNotesMsg";
       message.textContent = "Non non pas plus de 100 notes";
-      message.style.color = "red";
+      message.style.color = "rgb(0, 230, 230)";
       document.querySelector("#musicGenerator").appendChild(message);
     }
   }
+  noteCountBtn.disabled = false;
 });
 
 // Charger le fichier JSON
