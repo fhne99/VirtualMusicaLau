@@ -2,7 +2,7 @@ import MusicPlayer from "./player.js";
 const noteCount = document.querySelector("#noteCount");
 const noteCountBtn = document.querySelector("#noteCountBtn");
 const mp = new MusicPlayer();
-const tempoSelect = document.querySelector('#tempo');
+const tempoSelect = document.querySelector("#tempo");
 
 let notes = {};
 let tempo = 0;
@@ -15,15 +15,15 @@ document.addEventListener(
   { once: true }
 );
 
-noteCountBtn.addEventListener('click', async() => {
+noteCountBtn.addEventListener("click", async () => {
   if (noteCount.value <= 100) {
-    if (document.querySelector('#toManyNotesMsg')) {
-      document.querySelector('#toManyNotesMsg').remove();
+    if (document.querySelector("#toManyNotesMsg")) {
+      document.querySelector("#toManyNotesMsg").remove();
     }
 
     for (let i = 0; i < noteCount.value; i++) {
       const note = await getRandomNote();
-      if (tempoSelect.value === 'random') {
+      if (tempoSelect.value === "random") {
         const duration = tempo / 1000;
         mp.play(note, duration);
         await new Promise((resolve) => setTimeout(resolve, tempo));
@@ -35,12 +35,12 @@ noteCountBtn.addEventListener('click', async() => {
       }
     }
   } else {
-    if (!document.querySelector('#toManyNotesMsg')) {
-      const message = document.createElement('p');
+    if (!document.querySelector("#toManyNotesMsg")) {
+      const message = document.createElement("p");
       message.id = "toManyNotesMsg";
       message.textContent = "Non non pas plus de 100 notes";
-      message.style.color = 'red';
-      document.querySelector('#musicGenerator').appendChild(message);
+      message.style.color = "red";
+      document.querySelector("#musicGenerator").appendChild(message);
     }
   }
 });
@@ -53,13 +53,12 @@ async function loadNotes() {
   }
   notes = await response.json();
   return notes; // <-- important
-};
+}
 
 //Générer un nombre aléatoire
 const randomNbr = (max) => {
   return Math.floor(Math.random() * max);
 };
-
 
 async function getRandomNote() {
   const notesObj = await loadNotes();
@@ -67,7 +66,7 @@ async function getRandomNote() {
   const idx = randomNbr(keys.length);
   const note = keys[idx].toString();
   tempo = notesObj[note][1];
-  return  note
+  return note;
 }
 
 // Assign piano keys to notes
@@ -214,15 +213,15 @@ function highlightKey(note, isActive) {
   }
 }
 
-const importBtn = document.getElementById('importBtn');
-const fileInput = document.getElementById('fileInput');
-const message = document.getElementById('message');
+const importBtn = document.getElementById("importBtn");
+const fileInput = document.getElementById("fileInput");
+const message = document.getElementById("message");
 
-const playerDiv = document.getElementById('player');
-const playPauseBtn = document.getElementById('playPauseBtn');
-const currentTimeSpan = document.getElementById('currentTime');
-const totalTimeSpan = document.getElementById('totalTime');
-const progressBar = document.getElementById('progressBar');
+const playerDiv = document.getElementById("player");
+const playPauseBtn = document.getElementById("playPauseBtn");
+const currentTimeSpan = document.getElementById("currentTime");
+const totalTimeSpan = document.getElementById("totalTime");
+const progressBar = document.getElementById("progressBar");
 
 const audioContext = new (window.AudioContext || window.webkitAudioContext)();
 const SILENCE_FREQUENCY = 0;
@@ -237,150 +236,162 @@ let playTimer = null;
 let scoreDuration = 0;
 
 async function loadFrequencies() {
-    try {
-        const response = await fetch('fichier.json');
-        if (!response.ok) throw new Error('Impossible de charger fichier.json');
-        NOTE_FREQUENCIES = await response.json();
-    } catch (err) {
-        console.error(err);
-        message.textContent = "Erreur lors du chargement des fréquences";
-    }
+  try {
+    const response = await fetch("fichier.json");
+    if (!response.ok) throw new Error("Impossible de charger fichier.json");
+    NOTE_FREQUENCIES = await response.json();
+  } catch (err) {
+    console.error(err);
+    message.textContent = "Erreur lors du chargement des fréquences";
+  }
 }
 loadFrequencies();
 
-importBtn.addEventListener('click', () => {
-    if(audioContext.state === "suspended") audioContext.resume();
-    fileInput.click();
+importBtn.addEventListener("click", () => {
+  if (audioContext.state === "suspended") audioContext.resume();
+  fileInput.click();
 });
 
-fileInput.addEventListener('change', (e) => {
-    const file = e.target.files[0];
-    if(!file) return;
+fileInput.addEventListener("change", (e) => {
+  const file = e.target.files[0];
+  if (!file) return;
 
-    const reader = new FileReader();
-    reader.onload = (ev) => {
-        const content = ev.target.result;
-        scoreData = parseScore(content);
+  const reader = new FileReader();
+  reader.onload = (ev) => {
+    const content = ev.target.result;
+    scoreData = parseScore(content);
 
-        const missingNote = scoreData.find(item => item.note !== '0' && !NOTE_FREQUENCIES[item.note]);
-        if(missingNote){
-            message.textContent = `Erreur : note ${missingNote.note} non définie dans le JSON`;
-            return;
-        }
+    const missingNote = scoreData.find(
+      (item) => item.note !== "0" && !NOTE_FREQUENCIES[item.note]
+    );
+    if (missingNote) {
+      message.textContent = `Erreur : note ${missingNote.note} non définie dans le JSON`;
+      return;
+    }
 
-        scoreDuration = scoreData.reduce((sum, item) => sum + item.duration, 0);
+    scoreDuration = scoreData.reduce((sum, item) => sum + item.duration, 0);
 
-        playerDiv.style.display = "flex";
-        progressBar.value = 0;
-        currentTimeSpan.textContent = "0:00";
-        totalTimeSpan.textContent = formatTime(scoreDuration);
-        currentIndex = 0;
-        pauseTime = 0;
-        isPlaying = false;
-        playPauseBtn.textContent = "⏵";
-    };
-    reader.readAsText(file);
+    playerDiv.style.display = "flex";
+    progressBar.value = 0;
+    currentTimeSpan.textContent = "0:00";
+    totalTimeSpan.textContent = formatTime(scoreDuration);
+    currentIndex = 0;
+    pauseTime = 0;
+    isPlaying = false;
+    playPauseBtn.textContent = "⏵";
+  };
+  reader.readAsText(file);
 });
 
-progressBar.addEventListener('click', (e) => {
-    if (!scoreData.length) return;
+progressBar.addEventListener("click", (e) => {
+  if (!scoreData.length) return;
 
-    const rect = progressBar.getBoundingClientRect();
-    const clickX = e.clientX - rect.left;
-    const newPercent = clickX / rect.width;
-    const newTime = newPercent * scoreDuration;
+  const rect = progressBar.getBoundingClientRect();
+  const clickX = e.clientX - rect.left;
+  const newPercent = clickX / rect.width;
+  const newTime = newPercent * scoreDuration;
 
-    let accumulated = 0;
-    let newIndex = 0;
-    for (let i = 0; i < scoreData.length; i++) {
-        accumulated += scoreData[i].duration;
-        if (accumulated >= newTime) {
-            newIndex = i;
-            break;
-        }
+  let accumulated = 0;
+  let newIndex = 0;
+  for (let i = 0; i < scoreData.length; i++) {
+    accumulated += scoreData[i].duration;
+    if (accumulated >= newTime) {
+      newIndex = i;
+      break;
     }
+  }
 
-    currentIndex = newIndex;
-    pauseTime = newTime;
+  currentIndex = newIndex;
+  pauseTime = newTime;
 
-    if (!isPlaying) {
-        progressBar.value = newPercent * 100;
-        currentTimeSpan.textContent = formatTime(newTime);
-    } else {
-        clearTimeout(playTimer);
-        startTime = audioContext.currentTime - pauseTime;
-        playFrom(currentIndex);
-    }
+  if (!isPlaying) {
+    progressBar.value = newPercent * 100;
+    currentTimeSpan.textContent = formatTime(newTime);
+  } else {
+    clearTimeout(playTimer);
+    startTime = audioContext.currentTime - pauseTime;
+    playFrom(currentIndex);
+  }
 });
 
 function parseScore(content) {
-    return content.trim().split("\n").slice(1).map(line => {
-        const [note, duration] = line.trim().split(/\s+/);
-        return { note: note.toUpperCase(), duration: parseFloat(duration) };
-    }).filter(item => !isNaN(item.duration));
+  return content
+    .trim()
+    .split("\n")
+    .slice(1)
+    .map((line) => {
+      const [note, duration] = line.trim().split(/\s+/);
+      return { note: note.toUpperCase(), duration: parseFloat(duration) };
+    })
+    .filter((item) => !isNaN(item.duration));
 }
 
-playPauseBtn.addEventListener('click', () => {
-    if(!isPlaying){
-        isPlaying = true;
-        playPauseBtn.textContent = "⏸";
-        startTime = pauseTime > 0 ? audioContext.currentTime - pauseTime : audioContext.currentTime;
-        if(pauseTime===0) currentIndex=0;
-        playFrom(currentIndex);
-    } else {
-        isPlaying = false;
-        playPauseBtn.textContent = "⏵";
-        pauseTime = audioContext.currentTime - startTime;
-        clearTimeout(playTimer);
-    }
+playPauseBtn.addEventListener("click", () => {
+  if (!isPlaying) {
+    isPlaying = true;
+    playPauseBtn.textContent = "⏸";
+    startTime =
+      pauseTime > 0
+        ? audioContext.currentTime - pauseTime
+        : audioContext.currentTime;
+    if (pauseTime === 0) currentIndex = 0;
+    playFrom(currentIndex);
+  } else {
+    isPlaying = false;
+    playPauseBtn.textContent = "⏵";
+    pauseTime = audioContext.currentTime - startTime;
+    clearTimeout(playTimer);
+  }
 });
 
-function playFrom(index){
-    if(index >= scoreData.length || !isPlaying){
-        isPlaying = false;
-        pauseTime = 0;
-        currentIndex = 0;
-        playPauseBtn.textContent = "⏵";
-        progressBar.value = 100;
-        currentTimeSpan.textContent = formatTime(scoreDuration);
-        return;
-    }
+function playFrom(index) {
+  if (index >= scoreData.length || !isPlaying) {
+    isPlaying = false;
+    pauseTime = 0;
+    currentIndex = 0;
+    playPauseBtn.textContent = "⏵";
+    progressBar.value = 100;
+    currentTimeSpan.textContent = formatTime(scoreDuration);
+    return;
+  }
 
-    const item = scoreData[index];
-    const freq = NOTE_FREQUENCIES[item.note]?.[0] || SILENCE_FREQUENCY;
+  const item = scoreData[index];
+  const freq = NOTE_FREQUENCIES[item.note]?.[0] || SILENCE_FREQUENCY;
 
-    if(freq>0) playTone(freq, audioContext.currentTime, item.duration);
+  if (freq > 0) playTone(freq, audioContext.currentTime, item.duration);
 
-    const elapsed = scoreData.slice(0,index).reduce((sum,i)=> sum+i.duration,0);
-    currentTimeSpan.textContent = formatTime(elapsed);
-    progressBar.value = (elapsed/scoreDuration)*100;
+  const elapsed = scoreData
+    .slice(0, index)
+    .reduce((sum, i) => sum + i.duration, 0);
+  currentTimeSpan.textContent = formatTime(elapsed);
+  progressBar.value = (elapsed / scoreDuration) * 100;
 
-    currentIndex = index+1;
-    playTimer = setTimeout(()=>playFrom(currentIndex), item.duration*1000);
+  currentIndex = index + 1;
+  playTimer = setTimeout(() => playFrom(currentIndex), item.duration * 1000);
 }
 
-function playTone(freq, startTime, duration){
-    const osc = audioContext.createOscillator();
-    const gain = audioContext.createGain();
+function playTone(freq, startTime, duration) {
+  const osc = audioContext.createOscillator();
+  const gain = audioContext.createGain();
 
-    osc.type = "sawtooth";
-    osc.frequency.setValueAtTime(freq, startTime);
+  osc.type = "sawtooth";
+  osc.frequency.setValueAtTime(freq, startTime);
 
-    gain.gain.setValueAtTime(0, startTime);
-    gain.gain.linearRampToValueAtTime(0.2, startTime+0.01);
-    gain.gain.linearRampToValueAtTime(0.0001, startTime+duration);
+  gain.gain.setValueAtTime(0, startTime);
+  gain.gain.linearRampToValueAtTime(0.2, startTime + 0.01);
+  gain.gain.linearRampToValueAtTime(0.0001, startTime + duration);
 
-    osc.connect(gain);
-    gain.connect(audioContext.destination);
+  osc.connect(gain);
+  gain.connect(audioContext.destination);
 
-    osc.start(startTime);
-    osc.stop(startTime+duration);
+  osc.start(startTime);
+  osc.stop(startTime + duration);
 }
 
-function formatTime(seconds){
-    const min = Math.floor(seconds/60);
-    const sec = Math.floor(seconds%60);
-    return `${min}:${sec.toString().padStart(2,"0")}`;
+function formatTime(seconds) {
+  const min = Math.floor(seconds / 60);
+  const sec = Math.floor(seconds % 60);
+  return `${min}:${sec.toString().padStart(2, "0")}`;
 }
 // Enregistrement
 let isRecording = false;
@@ -477,3 +488,64 @@ async function savePartition(recordedNotes) {
   a.remove();
   setTimeout(() => URL.revokeObjectURL(url), 2000);
 }
+
+// Boutons
+const startRecBtn = document.getElementById("startRec");
+const stopRecBtn = document.getElementById("stopRec");
+const downloadLink = document.getElementById("downloadLink");
+
+startRecBtn.addEventListener("click", () => {
+  mp.startRecording();
+  startRecBtn.disabled = true;
+  stopRecBtn.disabled = false;
+});
+
+stopRecBtn.addEventListener("click", async () => {
+  const blob = await mp.stopRecording();
+  if (!blob) return;
+
+  // ✅ Méthode moderne : showSaveFilePicker
+  if (window.showSaveFilePicker) {
+    try {
+      const handle = await window.showSaveFilePicker({
+        suggestedName: "piano_recording.mp3",
+        types: [
+          {
+            description: "Enregistrement audio",
+            accept: { "audio/webm": [".webm"] },
+          },
+        ],
+      });
+
+      const writable = await handle.createWritable();
+      await writable.write(blob);
+      await writable.close();
+      alert("✅ Enregistrement sauvegardé avec succès !");
+      return;
+    } catch (err) {
+      console.warn("showSaveFilePicker annulé ou non dispo :", err);
+    }
+  }
+
+  // 🔹 Fallback : création d'un lien temporaire
+  const filename =
+    prompt(
+      "Nom du fichier (ex : piano_recording.mp3)",
+      "piano_recording.mp3"
+    ) || "piano_recording.mp3";
+
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = filename;
+  document.body.appendChild(a);
+
+  const evt = new MouseEvent("click", { bubbles: true, cancelable: true });
+  a.dispatchEvent(evt);
+
+  a.remove();
+  setTimeout(() => URL.revokeObjectURL(url), 2000);
+
+  startRecBtn.disabled = false;
+  stopRecBtn.disabled = true;
+});
