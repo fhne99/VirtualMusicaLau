@@ -284,6 +284,30 @@
         box-shadow: 0 0 15px #ffcc33, inset 0 2px 6px rgba(255, 255, 255, 0.5);
         transform: translateY(-50%) scale(1.3); /* agrandit légèrement */
       }
+      #speedSelect {
+  color: rgb(255, 75, 75);     /* couleur du texte */
+  background-color: white;   /* fond sombre pour contraste */
+  font-size: 0.75rem;       /* plus petit texte */
+  padding: 2px 6px;         /* espace réduit */
+  width: 50px;  
+  height: 30px;            /* largeur réduite */          /* réduit l’espace intérieur */
+  border: 1px solid #ff4b4b;   /* bordure rouge assortie */
+  border-radius: 10px;          /* arrondir les coins */
+  outline: none;               /* enlever contour bleu par défaut */
+  cursor: pointer;             /* curseur main au survol */
+  transition: all 0.2s ease-in-out;
+  margin-right: 2px;
+}
+
+#speedSelect:hover {
+  background-color: #2a2a40;   /* éclaircir un peu au survol */
+}
+
+#speedSelect option {
+  background-color: #1e1e2f;   /* fond pour les options */
+  color: white;                /* texte en blanc */
+}
+
     </style>
   </head>
   <body>
