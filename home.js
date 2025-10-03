@@ -97,6 +97,8 @@ Array.from(document.getElementsByClassName("blackButtons")).forEach(
     ];
     btn.addEventListener("click", () => {
       mp.play(notesNoires[i], 1);
+      recordNote(notesNoires[i]);
+
     });
   }
 );
@@ -137,6 +139,7 @@ document.querySelectorAll(".white-key").forEach((key, i) => {
 
   key.addEventListener("click", () => {
     mp.play(notesBlanches[i], 1);
+    recordNote(notesBlanches[i]);
   });
 });
 
@@ -186,6 +189,8 @@ document.addEventListener("keydown", (event) => {
 
     // Jouer note tenue (pas de durée => null)
     mp.play(note, null);
+    recordNote(note);
+
 
     highlightKey(note, true);
   }
@@ -394,10 +399,12 @@ function recordNote(note) {
     recordedNotes.push(["0", delta.toFixed(3)]); // silence
   }
 
-  recordedNotes.push([note, 0.125]); // durée fixe (tu peux adapter)
+  recordedNotes.push([String(note), 0.125]);
+
   lastTime = now;
   console.log(recordedNotes);
 }
+
 
 // Boutons start/stop
 const startBtn = document.getElementById("start");
