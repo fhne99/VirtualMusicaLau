@@ -481,6 +481,7 @@ selectInstrument.addEventListener("change", function () {
 let flutesonLike;
 let holesflute; // Déclaré globalement
 const notesflute = ["C4", "D4", "E4", "F4", "G4", "A4", "B4", "C5"];
+const keyMap = { a: 0, z: 1, e: 2, r: 3, t: 4, y: 5, u: 6, i: 7 };
 
 document.addEventListener("DOMContentLoaded", () => {
   // Crée le synthé flûte
@@ -509,6 +510,8 @@ document.addEventListener("DOMContentLoaded", () => {
     hole.addEventListener("click", async () => {
       await Tone.start();
       flutesonLike.triggerAttackRelease(notesflute[i], "4n");
+      // Enregistrer la note
+       recordNote(notesflute[i]);
 
       // Illuminer le trou
       hole.classList.add("active");
@@ -517,23 +520,56 @@ document.addEventListener("DOMContentLoaded", () => {
   });
 });
 
-// 🎹 Jouer avec clavier
-const keyMap = { a: 0, z: 1, e: 2, r: 3, t: 4, y: 5, u: 6, i: 7 };
+// gestion du clavier pour la flûte et le piano
+document.addEventListener("keydown", async (event) => {
+  const instrument = selectInstrument.value; 
+  const key = event.key.toLowerCase();
 
-document.addEventListener("keydown", async (e) => {
-  const index = keyMap[e.key.toLowerCase()];
-  if (index !== undefined && holesflute) {
-    await Tone.start();
-    flutesonLike.triggerAttackRelease(notesflute[index], "4n");
+  if (instrument === "flute") {
+    // Jouer la flûte
+    const index = keyMap[key];
+    if (index !== undefined && holesflute) {
+      await Tone.start();
+      flutesonLike.triggerAttackRelease(notesflute[index], "4n");
 
-    // Illuminer le trou correspondant
-    const hole = holesflute[index];
-    if (hole) {
-      hole.classList.add("active");
-      setTimeout(() => hole.classList.remove("active"), 400);
+
+      //ajouter pour enregistrer la note
+      recordNote(notesflute[index]); 
+
+      const hole = holesflute[index];
+      if (hole) {
+        hole.classList.add("active");
+        setTimeout(() => hole.classList.remove("active"), 400);
+      }
+    }
+  }
+
+  if (instrument === "piano") {
+    // Jouer le piano
+    const note = clavierToNote[key];
+    if (note && !activeNotes[key]) {
+      activeNotes[key] = note;
+      mp.play(note, null);
+      recordNote(note);
+      highlightKey(note, true);
     }
   }
 });
+
+document.addEventListener("keyup", (event) => {
+  const instrument = selectInstrument.value;
+  const key = event.key.toLowerCase();
+
+  if (instrument === "piano") {
+    const note = clavierToNote[key];
+    if (note) {
+      mp.stop(note);
+      delete activeNotes[key];
+      highlightKey(note, false);
+    }
+  }
+});
+
 
 // Boutons
 const startRecBtn = document.getElementById("startRec");
