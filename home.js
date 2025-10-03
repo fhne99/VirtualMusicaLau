@@ -203,11 +203,19 @@ document.addEventListener("keydown", (event) => {
   if (note && !activeNotes[event.key]) {
     activeNotes[event.key] = note;
 
-    // Jouer note tenue (pas de durée => null)
     mp.play(note, null);
-    recordNote(note);
-
     highlightKey(note, true);
+
+    if (isRecording) {
+      noteStartTimes[event.key] = Date.now();
+      // Silence éventuel
+      if (lastNoteEnd) {
+        const silence = (Date.now() - lastNoteEnd) / 1000;
+        if (silence > 0.05) {
+          recordedNotes.push(["0", silence.toFixed(3)]);
+        }
+      }
+    }
   }
 });
 
@@ -216,9 +224,43 @@ document.addEventListener("keyup", (event) => {
   if (note) {
     mp.stop(note);
     delete activeNotes[event.key];
-
     highlightKey(note, false);
+
+    if (isRecording && noteStartTimes[event.key]) {
+      const start = noteStartTimes[event.key];
+      const duration = (Date.now() - start) / 1000;
+      recordedNotes.push([note, duration.toFixed(3)]);
+      lastNoteEnd = Date.now();
+      delete noteStartTimes[event.key];
+    }
   }
+});
+
+document.querySelectorAll(".white-key, .blackButtons").forEach((key) => {
+  const note = key.getAttribute("data-note");
+
+  key.addEventListener("mousedown", () => {
+    mp.play(note, null);
+
+    if (isRecording) {
+      noteStartTimes[note] = Date.now();
+      if (lastNoteEnd) {
+        const silence = (Date.now() - lastNoteEnd) / 1000;
+        if (silence > 0.05) recordedNotes.push(["0", silence.toFixed(3)]);
+      }
+    }
+  });
+
+  key.addEventListener("mouseup", () => {
+    mp.stop(note);
+
+    if (isRecording && noteStartTimes[note]) {
+      const duration = (Date.now() - noteStartTimes[note]) / 1000;
+      recordedNotes.push([note, duration.toFixed(3)]);
+      lastNoteEnd = Date.now();
+      delete noteStartTimes[note];
+    }
+  });
 });
 
 // Fonction pour mettre à jour le visuel
@@ -411,6 +453,9 @@ function playTone(freq, startTime, duration) {
 // Enregistrement
 let isRecording = false;
 let recordedNotes = [];
+let noteStartTimes = {}; // Pour suivre début de chaque note
+let lastNoteEnd = null; // Pour calculer les silences
+
 console.log(recordedNotes);
 
 let lastTime = null;
@@ -451,25 +496,44 @@ stopBtn.addEventListener("click", () => {
 });
 
 // Télécharger le fichier
-downloadBtn.addEventListener("click", () => {
+downloadBtn.addEventListener("click", async () => {
   if (recordedNotes.length === 0) {
     alert("Aucune note enregistrée !");
     return;
   }
 
-  // Convertir recordedNotes en texte
   const content = recordedNotes.map((n) => n.join(" ")).join("\n");
-
-  // Créer le fichier et déclencher le téléchargement
   const blob = new Blob([content], { type: "text/plain" });
+
+  if (window.showSaveFilePicker) {
+    try {
+      const handle = await window.showSaveFilePicker({
+        suggestedName: "partition.txt",
+        types: [
+          {
+            description: "Partition",
+            accept: { "text/plain": [".txt"] },
+          },
+        ],
+      });
+
+      const writable = await handle.createWritable();
+      await writable.write(blob);
+      await writable.close();
+      alert("✅ Partition sauvegardée !");
+      return;
+    } catch (err) {
+      console.warn("Annulé :", err);
+    }
+  }
+
+  // 🔹 Fallback si le navigateur ne supporte pas showSaveFilePicker
   const url = URL.createObjectURL(blob);
   const a = document.createElement("a");
   a.href = url;
   a.download = "partition.txt";
   a.click();
   URL.revokeObjectURL(url);
-
-  alert("✅ Partition téléchargée !");
 });
 
 function formatTime(seconds) {
