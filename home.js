@@ -495,13 +495,50 @@ startRecBtn.addEventListener("click", () => {
 
 stopRecBtn.addEventListener("click", async () => {
   const blob = await mp.stopRecording();
-  if (blob) {
-    const url = URL.createObjectURL(blob);
-    downloadLink.href = url;
-    downloadLink.download = "piano_recording.mp3";
-    downloadLink.style.display = "inline";
-    downloadLink.textContent = "Télécharger l’enregistrement";
+  if (!blob) return;
+
+  // ✅ Méthode moderne : showSaveFilePicker
+  if (window.showSaveFilePicker) {
+    try {
+      const handle = await window.showSaveFilePicker({
+        suggestedName: "piano_recording.mp3",
+        types: [
+          {
+            description: "Enregistrement audio",
+            accept: { "audio/webm": [".webm"] },
+          },
+        ],
+      });
+
+      const writable = await handle.createWritable();
+      await writable.write(blob);
+      await writable.close();
+      alert("✅ Enregistrement sauvegardé avec succès !");
+      return;
+    } catch (err) {
+      console.warn("showSaveFilePicker annulé ou non dispo :", err);
+    }
   }
+
+  // 🔹 Fallback : création d'un lien temporaire
+  const filename =
+    prompt(
+      "Nom du fichier (ex : piano_recording.mp3)",
+      "piano_recording.mp3"
+    ) || "piano_recording.mp3";
+
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = filename;
+  document.body.appendChild(a);
+
+  const evt = new MouseEvent("click", { bubbles: true, cancelable: true });
+  a.dispatchEvent(evt);
+
+  a.remove();
+  setTimeout(() => URL.revokeObjectURL(url), 2000);
+
   startRecBtn.disabled = false;
   stopRecBtn.disabled = true;
 });
