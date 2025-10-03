@@ -260,7 +260,6 @@
         box-shadow: 0 0 15px #ffcc33, inset 0 2px 6px rgba(255, 255, 255, 0.5);
         transform: translateY(-50%) scale(1.3); /* agrandit légèrement */
       }
-      
     </style>
   </head>
   <body>
@@ -345,13 +344,23 @@
       <div class="note note6">La</div>
     </div>
 
-    <button class="enregister" id="start">
-      Démarrer l'enregistrement pour avoir la partition
-    </button>
-    <button class="enregister" id="stop">
-      Arreter l'enregistrement pour avoir la partition
-    </button>
-    <button id="downloadBtn">Télécharger ma partition</button>
+    <div>
+      <button class="enregister" id="start">
+        Démarrer l'enregistrement pour avoir la partition
+      </button>
+      <button class="enregister" id="stop">
+        Arreter l'enregistrement pour avoir la partition
+      </button>
+      <button id="downloadBtn">Télécharger ma partition</button>
+    </div>
+
+    <div>
+      <button id="startRec">🎙️ Démarrer enregistrement audio</button>
+      <button id="stopRec" disabled>⏹️ Stop</button>
+      <a id="downloadLink" style="display: none"
+        >Télécharger l’enregistrement</a
+      >
+    </div>
 
     <h2>Générateur de séquence musicale</h2>
     <div id="musicGenerator" style="margin-bottom: 20px">
