@@ -478,25 +478,44 @@ stopBtn.addEventListener("click", () => {
 });
 
 // Télécharger le fichier
-downloadBtn.addEventListener("click", () => {
+downloadBtn.addEventListener("click", async () => {
   if (recordedNotes.length === 0) {
     alert("Aucune note enregistrée !");
     return;
   }
 
-  // Convertir recordedNotes en texte
   const content = recordedNotes.map((n) => n.join(" ")).join("\n");
-
-  // Créer le fichier et déclencher le téléchargement
   const blob = new Blob([content], { type: "text/plain" });
+
+  if (window.showSaveFilePicker) {
+    try {
+      const handle = await window.showSaveFilePicker({
+        suggestedName: "partition.txt",
+        types: [
+          {
+            description: "Partition",
+            accept: { "text/plain": [".txt"] },
+          },
+        ],
+      });
+
+      const writable = await handle.createWritable();
+      await writable.write(blob);
+      await writable.close();
+      alert("✅ Partition sauvegardée !");
+      return;
+    } catch (err) {
+      console.warn("Annulé :", err);
+    }
+  }
+
+  // 🔹 Fallback si le navigateur ne supporte pas showSaveFilePicker
   const url = URL.createObjectURL(blob);
   const a = document.createElement("a");
   a.href = url;
   a.download = "partition.txt";
   a.click();
   URL.revokeObjectURL(url);
-
-  alert("✅ Partition téléchargée !");
 });
 
 function formatTime(seconds) {
