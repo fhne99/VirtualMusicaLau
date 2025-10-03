@@ -393,159 +393,75 @@ function formatTime(seconds) {
   const sec = Math.floor(seconds % 60);
   return `${min}:${sec.toString().padStart(2, "0")}`;
 }
-// Enregistrement
-let isRecording = false;
-let recordedNotes = [];
-console.log(recordedNotes);
 
-let lastTime = null;
+// Changer d'instrument
+const selectInstrument = document.getElementById("instrument");
+const fluteDiv = document.querySelector(".flute");
+const pianoDiv = document.querySelector(".piano");
 
-function recordNote(note) {
-  if (!isRecording) return;
+selectInstrument.addEventListener("change", function () {
+  const choix = selectInstrument.value;
 
-  const now = Date.now();
-
-  if (lastTime) {
-    const delta = (now - lastTime) / 1000; // en secondes
-    recordedNotes.push(["0", delta.toFixed(3)]); // silence
+  if (choix === "flute") {
+    fluteDiv.style.display = "block";
+    pianoDiv.style.display = "none";
+  } else if (choix === "piano") {
+    fluteDiv.style.display = "none";
+    pianoDiv.style.display = "flex";
   }
-
-  recordedNotes.push([String(note), 0.125]);
-
-  lastTime = now;
-  console.log(recordedNotes);
-}
-
-
-// Boutons start/stop
-const startBtn = document.getElementById("start");
-const stopBtn = document.getElementById("stop");
-const downloadBtn = document.getElementById("downloadBtn");
-
-startBtn.addEventListener("click", () => {
-  recordedNotes = [];
-  lastTime = null;
-  isRecording = true;
-  alert("🎙️ Enregistrement démarré !");
 });
 
-stopBtn.addEventListener("click", () => {
-  isRecording = false;
-  alert("⏹️ Enregistrement arrêté !");
-});
+// creation des sons synthé flûte
+let flutesonLike;
+let holesflute;   // Déclaré globalement
+const notesflute = ["C4", "D4", "E4", "F4", "G4", "A4", "B4", "C5"];
 
-downloadBtn.addEventListener("click", () => {
-  savePartition(recordedNotes);
-});
+document.addEventListener("DOMContentLoaded", () => {
+  // Crée le synthé flûte
+  flutesonLike = new Tone.DuoSynth({
+    voice0: { oscillator: { type: "triangle",detune:10 }, envelope: { attack: 0.4,decay:0.1,sustain:0.7, release: 1.5 } },
+    voice1: { oscillator: { type: "sawtooth",detune:-10 }, envelope: { attack: 0.5,decay:0.1,sustain:0.6, release: 1.5 } },
+    harmonicity: 1.2,
+    volume: -8
+  }).toDestination();
 
-async function savePartition(recordedNotes) {
-  if (!recordedNotes || recordedNotes.length === 0) {
-    alert("Aucune note enregistrée !");
-    return;
-  }
+  // Réverb
+  const reverb = new Tone.Reverb({ decay: 4, wet: 0.4 }).toDestination();
+  flutesonLike.connect(reverb);
 
-  let content = "Unknown 0.125\n";
-  recordedNotes.forEach(([note, duration]) => {
-    content += `${note} ${duration}\n`;
+  
+
+  // Récupère tous les trous
+  holesflute = document.querySelectorAll(".hole");
+
+  // Clic sur chaque trou
+  holesflute.forEach((hole, i) => {
+    hole.addEventListener("click", async () => {
+      await Tone.start();
+      flutesonLike.triggerAttackRelease(notesflute[i], "4n");
+
+      // Illuminer le trou
+      hole.classList.add("active");
+      setTimeout(() => hole.classList.remove("active"), 400);
+    });
   });
-
-  if (window.showSaveFilePicker) {
-    try {
-      const handle = await window.showSaveFilePicker({
-        suggestedName: "partition.txt",
-        types: [
-          {
-            description: "Partition musicale",
-            accept: { "text/plain": [".txt"] },
-          },
-        ],
-      });
-      const writable = await handle.createWritable();
-      await writable.write(content);
-      await writable.close();
-      alert("✅ Fichier sauvegardé avec succès !");
-      return;
-    } catch (err) {
-      console.warn("showSaveFilePicker annulé ou non dispo :", err);
-    }
-  }
-
-  const filename =
-    prompt("Nom du fichier (ex : partition.txt)", "partition.txt") ||
-    "partition.txt";
-
-  const blob = new Blob([content], { type: "text/plain;charset=utf-8" });
-  const url = URL.createObjectURL(blob);
-
-  const a = document.createElement("a");
-  a.href = url;
-  a.download = filename;
-  document.body.appendChild(a);
-
-  const evt = new MouseEvent("click", { bubbles: true, cancelable: true });
-  a.dispatchEvent(evt);
-
-  a.remove();
-  setTimeout(() => URL.revokeObjectURL(url), 2000);
-}
-
-// Boutons
-const startRecBtn = document.getElementById("startRec");
-const stopRecBtn = document.getElementById("stopRec");
-const downloadLink = document.getElementById("downloadLink");
-
-startRecBtn.addEventListener("click", () => {
-  mp.startRecording();
-  startRecBtn.disabled = true;
-  stopRecBtn.disabled = false;
 });
 
-stopRecBtn.addEventListener("click", async () => {
-  const blob = await mp.stopRecording();
-  if (!blob) return;
+// 🎹 Jouer avec clavier
+const keyMap = { a:0, z:1, e:2, r:3, t:4, y:5, u:6, i:7 };
 
-  // ✅ Méthode moderne : showSaveFilePicker
-  if (window.showSaveFilePicker) {
-    try {
-      const handle = await window.showSaveFilePicker({
-        suggestedName: "piano_recording.mp3",
-        types: [
-          {
-            description: "Enregistrement audio",
-            accept: { "audio/webm": [".webm"] },
-          },
-        ],
-      });
+document.addEventListener("keydown", async (e) => {
+  const index = keyMap[e.key.toLowerCase()];
+  if (index !== undefined && holesflute) {
+    await Tone.start();
+    flutesonLike.triggerAttackRelease(notesflute[index], "4n");
 
-      const writable = await handle.createWritable();
-      await writable.write(blob);
-      await writable.close();
-      alert("✅ Enregistrement sauvegardé avec succès !");
-      return;
-    } catch (err) {
-      console.warn("showSaveFilePicker annulé ou non dispo :", err);
+    // Illuminer le trou correspondant
+    const hole = holesflute[index];
+    if (hole) {
+      hole.classList.add("active");
+      setTimeout(() => hole.classList.remove("active"), 400);
     }
   }
-
-  // 🔹 Fallback : création d'un lien temporaire
-  const filename =
-    prompt(
-      "Nom du fichier (ex : piano_recording.mp3)",
-      "piano_recording.mp3"
-    ) || "piano_recording.mp3";
-
-  const url = URL.createObjectURL(blob);
-  const a = document.createElement("a");
-  a.href = url;
-  a.download = filename;
-  document.body.appendChild(a);
-
-  const evt = new MouseEvent("click", { bubbles: true, cancelable: true });
-  a.dispatchEvent(evt);
-
-  a.remove();
-  setTimeout(() => URL.revokeObjectURL(url), 2000);
-
-  startRecBtn.disabled = false;
-  stopRecBtn.disabled = true;
 });
+
