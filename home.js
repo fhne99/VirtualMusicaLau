@@ -97,7 +97,6 @@ Array.from(document.getElementsByClassName("blackButtons")).forEach(
     btn.addEventListener("click", () => {
       mp.play(notesNoires[i], 1);
       recordNote(notesNoires[i]);
-
     });
   }
 );
@@ -189,7 +188,6 @@ document.addEventListener("keydown", (event) => {
     // Jouer note tenue (pas de durée => null)
     mp.play(note, null);
     recordNote(note);
-
 
     highlightKey(note, true);
   }
@@ -435,23 +433,27 @@ stopBtn.addEventListener("click", () => {
 
 // creation des sons synthé flûte
 let flutesonLike;
-let holesflute;   // Déclaré globalement
+let holesflute; // Déclaré globalement
 const notesflute = ["C4", "D4", "E4", "F4", "G4", "A4", "B4", "C5"];
 
 document.addEventListener("DOMContentLoaded", () => {
   // Crée le synthé flûte
   flutesonLike = new Tone.DuoSynth({
-    voice0: { oscillator: { type: "triangle",detune:10 }, envelope: { attack: 0.4,decay:0.1,sustain:0.7, release: 1.5 } },
-    voice1: { oscillator: { type: "sawtooth",detune:-10 }, envelope: { attack: 0.5,decay:0.1,sustain:0.6, release: 1.5 } },
+    voice0: {
+      oscillator: { type: "triangle", detune: 10 },
+      envelope: { attack: 0.4, decay: 0.1, sustain: 0.7, release: 1.5 },
+    },
+    voice1: {
+      oscillator: { type: "sawtooth", detune: -10 },
+      envelope: { attack: 0.5, decay: 0.1, sustain: 0.6, release: 1.5 },
+    },
     harmonicity: 1.2,
-    volume: -8
+    volume: -8,
   }).toDestination();
 
   // Réverb
   const reverb = new Tone.Reverb({ decay: 4, wet: 0.4 }).toDestination();
   flutesonLike.connect(reverb);
-
-  
 
   // Récupère tous les trous
   holesflute = document.querySelectorAll(".hole");
@@ -470,7 +472,7 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 
 // 🎹 Jouer avec clavier
-const keyMap = { a:0, z:1, e:2, r:3, t:4, y:5, u:6, i:7 };
+const keyMap = { a: 0, z: 1, e: 2, r: 3, t: 4, y: 5, u: 6, i: 7 };
 
 document.addEventListener("keydown", async (e) => {
   const index = keyMap[e.key.toLowerCase()];
@@ -487,6 +489,7 @@ document.addEventListener("keydown", async (e) => {
   }
 });
 
+<<<<<<< HEAD
   const filename =
     prompt("Nom du fichier (ex : partition.txt)", "partition.txt") ||
     "partition.txt";
@@ -494,6 +497,53 @@ document.addEventListener("keydown", async (e) => {
   const blob = new Blob([content], { type: "text/plain;charset=utf-8" });
   const url = URL.createObjectURL(blob);
 
+=======
+// Boutons
+const startRecBtn = document.getElementById("startRec");
+const stopRecBtn = document.getElementById("stopRec");
+
+startRecBtn.addEventListener("click", () => {
+  mp.startRecording();
+  startRecBtn.disabled = true;
+  stopRecBtn.disabled = false;
+});
+
+stopRecBtn.addEventListener("click", async () => {
+  const blob = await mp.stopRecording();
+  if (!blob) return;
+
+  // ✅ Méthode moderne : showSaveFilePicker
+  if (window.showSaveFilePicker) {
+    try {
+      const handle = await window.showSaveFilePicker({
+        suggestedName: "piano_recording.mp3",
+        types: [
+          {
+            description: "Enregistrement audio",
+            accept: { "audio/mp3": [".mp3"] },
+          },
+        ],
+      });
+
+      const writable = await handle.createWritable();
+      await writable.write(blob);
+      await writable.close();
+      alert("✅ Enregistrement sauvegardé avec succès !");
+      return;
+    } catch (err) {
+      console.warn("showSaveFilePicker annulé ou non dispo :", err);
+    }
+  }
+
+  // 🔹 Fallback : création d'un lien temporaire
+  const filename =
+    prompt(
+      "Nom du fichier (ex : piano_recording.mp3)",
+      "piano_recording.mp3"
+    ) || "piano_recording.mp3";
+
+  const url = URL.createObjectURL(blob);
+>>>>>>> 47e1349d2811be97c3d37bff6724ba843ce9972c
   const a = document.createElement("a");
   a.href = url;
   a.download = filename;
@@ -504,9 +554,16 @@ document.addEventListener("keydown", async (e) => {
 
   a.remove();
   setTimeout(() => URL.revokeObjectURL(url), 2000);
+<<<<<<< HEAD
   URL.revokeObjectURL(url);
 
 speedSelect.addEventListener("change", (e) => {
   playSpeed = parseInt(e.target.value) / 1000;
 });
 
+=======
+
+  startRecBtn.disabled = false;
+  stopRecBtn.disabled = true;
+});
+>>>>>>> 47e1349d2811be97c3d37bff6724ba843ce9972c
