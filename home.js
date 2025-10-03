@@ -97,7 +97,6 @@ Array.from(document.getElementsByClassName("blackButtons")).forEach(
     ];
     btn.addEventListener("click", () => {
       mp.play(notesNoires[i], 1);
-      recordNote(notesNoires[i]);
     });
   }
 );
@@ -138,7 +137,6 @@ document.querySelectorAll(".white-key").forEach((key, i) => {
 
   key.addEventListener("click", () => {
     mp.play(notesBlanches[i], 1);
-    recordNote(notesBlanches[i]);
   });
 });
 
@@ -188,7 +186,7 @@ document.addEventListener("keydown", (event) => {
 
     // Jouer note tenue (pas de durée => null)
     mp.play(note, null);
-    recordNote(note);
+
     highlightKey(note, true);
   }
 });
