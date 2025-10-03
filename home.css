@@ -1,39 +1,10 @@
-#player{
-  display:none;
+#player {
+  display: none;
 }
-
-.button-icon {
+#playerVisible {
   display: flex;
-  flex-direction: column;
-  align-items: center;
   justify-content: center;
-  width: 80px;
-  height: 80px;
-  margin: 5px;
-  border: 1px solid #ccc;
-  border-radius: 10px;
-  background-color: #f5f5f5;
-  cursor: pointer;
-  font-family: sans-serif;
-  font-size: 12px;
-  transition: all 0.2s;
-}
-
-.button-icon:hover {
-  background-color: #e0e0e0;
-  transform: scale(1.05);
-}
-
-.button-icon i {
-  font-size: 24px;
-  margin-bottom: 5px;
-}
-
-.button-container {
-  display: flex;
-  gap: 10px;
-  flex-wrap: wrap;
-  margin-top: 10px;
+  align-items: center;
 }
 
 #importBtn {
@@ -64,7 +35,7 @@
   display: none;
   background: #fff;
   border-radius: 15px;
-  box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
   padding: 15px 20px;
   width: 350px;
   display: flex;
@@ -77,13 +48,16 @@
   font-size: 24px;
   width: 30px;
   height: 30px;
-  border-radius: 50%;
+  border-radius: 100%;
   border: none;
   background: #ff6b6b;
   color: white;
   cursor: pointer;
   transition: background 0.3s ease, transform 0.2s ease;
-  margin-bottom: 10px;
+  line-height: 24px;
+  align-items: center;
+  justify-content: center;
+  display: flex;
 }
 
 #playPauseBtn:hover {
@@ -100,12 +74,13 @@
 }
 
 #progressBar {
-  width: 100%;
+  width: 75%;
   height: 8px;
   appearance: none;
   border-radius: 4px;
   overflow: hidden;
   cursor: pointer;
+  margin-left: 1vw;
 }
 
 #progressBar::-webkit-progress-bar {
