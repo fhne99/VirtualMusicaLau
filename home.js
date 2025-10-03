@@ -1,8 +1,8 @@
-import MusicPlayer from "./player.js";
+import MusicPlayer from "./player.js";  
 const noteCount = document.querySelector("#noteCount");
 const noteCountBtn = document.querySelector("#noteCountBtn");
 const mp = new MusicPlayer();
-const tempoSelect = document.querySelector('#tempo');
+const tempoSelect = document.querySelector("#tempo");
 
 let notes = {};
 let tempo = 0;
@@ -15,15 +15,15 @@ document.addEventListener(
   { once: true }
 );
 
-noteCountBtn.addEventListener('click', async() => {
+noteCountBtn.addEventListener("click", async () => {
   if (noteCount.value <= 100) {
-    if (document.querySelector('#toManyNotesMsg')) {
-      document.querySelector('#toManyNotesMsg').remove();
+    if (document.querySelector("#toManyNotesMsg")) {
+      document.querySelector("#toManyNotesMsg").remove();
     }
 
     for (let i = 0; i < noteCount.value; i++) {
       const note = await getRandomNote();
-      if (tempoSelect.value === 'random') {
+      if (tempoSelect.value === "random") {
         const duration = tempo / 1000;
         mp.play(note, duration);
         await new Promise((resolve) => setTimeout(resolve, tempo));
@@ -35,12 +35,12 @@ noteCountBtn.addEventListener('click', async() => {
       }
     }
   } else {
-    if (!document.querySelector('#toManyNotesMsg')) {
-      const message = document.createElement('p');
+    if (!document.querySelector("#toManyNotesMsg")) {
+      const message = document.createElement("p");
       message.id = "toManyNotesMsg";
       message.textContent = "Non non pas plus de 100 notes";
-      message.style.color = 'red';
-      document.querySelector('#musicGenerator').appendChild(message);
+      message.style.color = "red";
+      document.querySelector("#musicGenerator").appendChild(message);
     }
   }
 });
@@ -53,13 +53,12 @@ async function loadNotes() {
   }
   notes = await response.json();
   return notes; // <-- important
-};
+}
 
 //Générer un nombre aléatoire
 const randomNbr = (max) => {
   return Math.floor(Math.random() * max);
 };
-
 
 async function getRandomNote() {
   const notesObj = await loadNotes();
@@ -67,7 +66,7 @@ async function getRandomNote() {
   const idx = randomNbr(keys.length);
   const note = keys[idx].toString();
   tempo = notesObj[note][1];
-  return  note
+  return note;
 }
 
 // Assign piano keys to notes
@@ -97,6 +96,8 @@ Array.from(document.getElementsByClassName("blackButtons")).forEach(
     ];
     btn.addEventListener("click", () => {
       mp.play(notesNoires[i], 1);
+      recordNote(notesNoires[i]);
+
     });
   }
 );
@@ -137,6 +138,7 @@ document.querySelectorAll(".white-key").forEach((key, i) => {
 
   key.addEventListener("click", () => {
     mp.play(notesBlanches[i], 1);
+    recordNote(notesBlanches[i]);
   });
 });
 
@@ -186,6 +188,8 @@ document.addEventListener("keydown", (event) => {
 
     // Jouer note tenue (pas de durée => null)
     mp.play(note, null);
+    recordNote(note);
+
 
     highlightKey(note, true);
   }
@@ -209,15 +213,15 @@ function highlightKey(note, isActive) {
   }
 }
 
-const importBtn = document.getElementById('importBtn');
-const fileInput = document.getElementById('fileInput');
-const message = document.getElementById('message');
+const importBtn = document.getElementById("importBtn");
+const fileInput = document.getElementById("fileInput");
+const message = document.getElementById("message");
 
-const playerDiv = document.getElementById('player');
-const playPauseBtn = document.getElementById('playPauseBtn');
-const currentTimeSpan = document.getElementById('currentTime');
-const totalTimeSpan = document.getElementById('totalTime');
-const progressBar = document.getElementById('progressBar');
+const playerDiv = document.getElementById("player");
+const playPauseBtn = document.getElementById("playPauseBtn");
+const currentTimeSpan = document.getElementById("currentTime");
+const totalTimeSpan = document.getElementById("totalTime");
+const progressBar = document.getElementById("progressBar");
 
 const audioContext = new (window.AudioContext || window.webkitAudioContext)();
 const SILENCE_FREQUENCY = 0;
@@ -232,102 +236,112 @@ let playTimer = null;
 let scoreDuration = 0;
 
 async function loadFrequencies() {
-    try {
-        const response = await fetch('fichier.json');
-        if (!response.ok) throw new Error('Impossible de charger fichier.json');
-        NOTE_FREQUENCIES = await response.json();
-    } catch (err) {
-        console.error(err);
-        message.textContent = "Erreur lors du chargement des fréquences";
-    }
+  try {
+    const response = await fetch("fichier.json");
+    if (!response.ok) throw new Error("Impossible de charger fichier.json");
+    NOTE_FREQUENCIES = await response.json();
+  } catch (err) {
+    console.error(err);
+    message.textContent = "Erreur lors du chargement des fréquences";
+  }
 }
 loadFrequencies();
 
-importBtn.addEventListener('click', () => {
-    if(audioContext.state === "suspended") audioContext.resume();
-    fileInput.click();
+importBtn.addEventListener("click", () => {
+  if (audioContext.state === "suspended") audioContext.resume();
+  fileInput.click();
 });
 
-fileInput.addEventListener('change', (e) => {
-    const file = e.target.files[0];
-    if(!file) return;
+fileInput.addEventListener("change", (e) => {
+  const file = e.target.files[0];
+  if (!file) return;
 
-    const reader = new FileReader();
-    reader.onload = (ev) => {
-        const content = ev.target.result;
-        scoreData = parseScore(content);
+  const reader = new FileReader();
+  reader.onload = (ev) => {
+    const content = ev.target.result;
+    scoreData = parseScore(content);
 
-        const missingNote = scoreData.find(item => item.note !== '0' && !NOTE_FREQUENCIES[item.note]);
-        if(missingNote){
-            message.textContent = `Erreur : note ${missingNote.note} non définie dans le JSON`;
-            return;
-        }
+    const missingNote = scoreData.find(
+      (item) => item.note !== "0" && !NOTE_FREQUENCIES[item.note]
+    );
+    if (missingNote) {
+      message.textContent = `Erreur : note ${missingNote.note} non définie dans le JSON`;
+      return;
+    }
 
-        scoreDuration = scoreData.reduce((sum, item) => sum + item.duration, 0);
+    scoreDuration = scoreData.reduce((sum, item) => sum + item.duration, 0);
 
-        playerDiv.style.display = "flex";
-        progressBar.value = 0;
-        currentTimeSpan.textContent = "0:00";
-        totalTimeSpan.textContent = formatTime(scoreDuration);
-        currentIndex = 0;
-        pauseTime = 0;
-        isPlaying = false;
-        playPauseBtn.textContent = "⏵";
-    };
-    reader.readAsText(file);
+    playerDiv.style.display = "flex";
+    progressBar.value = 0;
+    currentTimeSpan.textContent = "0:00";
+    totalTimeSpan.textContent = formatTime(scoreDuration);
+    currentIndex = 0;
+    pauseTime = 0;
+    isPlaying = false;
+    playPauseBtn.textContent = "⏵";
+  };
+  reader.readAsText(file);
 });
 
-progressBar.addEventListener('click', (e) => {
-    if (!scoreData.length) return;
+progressBar.addEventListener("click", (e) => {
+  if (!scoreData.length) return;
 
-    const rect = progressBar.getBoundingClientRect();
-    const clickX = e.clientX - rect.left;
-    const newPercent = clickX / rect.width;
-    const newTime = newPercent * scoreDuration;
+  const rect = progressBar.getBoundingClientRect();
+  const clickX = e.clientX - rect.left;
+  const newPercent = clickX / rect.width;
+  const newTime = newPercent * scoreDuration;
 
-    let accumulated = 0;
-    let newIndex = 0;
-    for (let i = 0; i < scoreData.length; i++) {
-        accumulated += scoreData[i].duration;
-        if (accumulated >= newTime) {
-            newIndex = i;
-            break;
-        }
+  let accumulated = 0;
+  let newIndex = 0;
+  for (let i = 0; i < scoreData.length; i++) {
+    accumulated += scoreData[i].duration;
+    if (accumulated >= newTime) {
+      newIndex = i;
+      break;
     }
+  }
 
-    currentIndex = newIndex;
-    pauseTime = newTime;
+  currentIndex = newIndex;
+  pauseTime = newTime;
 
-    if (!isPlaying) {
-        progressBar.value = newPercent * 100;
-        currentTimeSpan.textContent = formatTime(newTime);
-    } else {
-        clearTimeout(playTimer);
-        startTime = audioContext.currentTime - pauseTime;
-        playFrom(currentIndex);
-    }
+  if (!isPlaying) {
+    progressBar.value = newPercent * 100;
+    currentTimeSpan.textContent = formatTime(newTime);
+  } else {
+    clearTimeout(playTimer);
+    startTime = audioContext.currentTime - pauseTime;
+    playFrom(currentIndex);
+  }
 });
 
 function parseScore(content) {
-    return content.trim().split("\n").slice(1).map(line => {
-        const [note, duration] = line.trim().split(/\s+/);
-        return { note: note.toUpperCase(), duration: parseFloat(duration) };
-    }).filter(item => !isNaN(item.duration));
+  return content
+    .trim()
+    .split("\n")
+    .slice(1)
+    .map((line) => {
+      const [note, duration] = line.trim().split(/\s+/);
+      return { note: note.toUpperCase(), duration: parseFloat(duration) };
+    })
+    .filter((item) => !isNaN(item.duration));
 }
 
-playPauseBtn.addEventListener('click', () => {
-    if(!isPlaying){
-        isPlaying = true;
-        playPauseBtn.textContent = "⏸";
-        startTime = pauseTime > 0 ? audioContext.currentTime - pauseTime : audioContext.currentTime;
-        if(pauseTime===0) currentIndex=0;
-        playFrom(currentIndex);
-    } else {
-        isPlaying = false;
-        playPauseBtn.textContent = "⏵";
-        pauseTime = audioContext.currentTime - startTime;
-        clearTimeout(playTimer);
-    }
+playPauseBtn.addEventListener("click", () => {
+  if (!isPlaying) {
+    isPlaying = true;
+    playPauseBtn.textContent = "⏸";
+    startTime =
+      pauseTime > 0
+        ? audioContext.currentTime - pauseTime
+        : audioContext.currentTime;
+    if (pauseTime === 0) currentIndex = 0;
+    playFrom(currentIndex);
+  } else {
+    isPlaying = false;
+    playPauseBtn.textContent = "⏵";
+    pauseTime = audioContext.currentTime - startTime;
+    clearTimeout(playTimer);
+  }
 });
 
 function playFrom(index){
@@ -341,8 +355,8 @@ function playFrom(index){
         return;
     }
 
-    const item = scoreData[index];
-    const freq = NOTE_FREQUENCIES[item.note]?.[0] || SILENCE_FREQUENCY;
+  const item = scoreData[index];
+  const freq = NOTE_FREQUENCIES[item.note]?.[0] || SILENCE_FREQUENCY;
 
     if(freq > 0) playTone(freq, audioContext.currentTime, item.duration / playSpeed); 
 
@@ -354,50 +368,50 @@ function playFrom(index){
     playTimer = setTimeout(()=>playFrom(currentIndex), (item.duration / playSpeed) * 1000); 
 }
 
-function playTone(freq, startTime, duration){
-    const osc = audioContext.createOscillator();
-    const gain = audioContext.createGain();
+function playTone(freq, startTime, duration) {
+  const osc = audioContext.createOscillator();
+  const gain = audioContext.createGain();
 
-    osc.type = "sawtooth";
-    osc.frequency.setValueAtTime(freq, startTime);
+  osc.type = "sawtooth";
+  osc.frequency.setValueAtTime(freq, startTime);
 
-    gain.gain.setValueAtTime(0, startTime);
-    gain.gain.linearRampToValueAtTime(0.2, startTime+0.01);
-    gain.gain.linearRampToValueAtTime(0.0001, startTime+duration);
+  gain.gain.setValueAtTime(0, startTime);
+  gain.gain.linearRampToValueAtTime(0.2, startTime + 0.01);
+  gain.gain.linearRampToValueAtTime(0.0001, startTime + duration);
 
-    osc.connect(gain);
-    gain.connect(audioContext.destination);
+  osc.connect(gain);
+  gain.connect(audioContext.destination);
 
-    osc.start(startTime);
-    osc.stop(startTime+duration);
+  osc.start(startTime);
+  osc.stop(startTime + duration);
 }
 
-function formatTime(seconds){
-    const min = Math.floor(seconds/60);
-    const sec = Math.floor(seconds%60);
-    return `${min}:${sec.toString().padStart(2,"0")}`;
+function formatTime(seconds) {
+  const min = Math.floor(seconds / 60);
+  const sec = Math.floor(seconds % 60);
+  return `${min}:${sec.toString().padStart(2, "0")}`;
 }
-// Enregistrement
-let isRecording = false;
-let recordedNotes = [];
-console.log(recordedNotes);
 
-let lastTime = null;
+// Changer d'instrument
+const selectInstrument = document.getElementById("instrument");
+const fluteDiv = document.querySelector(".flute");
+const pianoDiv = document.querySelector(".piano");
 
-function recordNote(note) {
-  if (!isRecording) return;
+selectInstrument.addEventListener("change", function () {
+  const choix = selectInstrument.value;
 
-  const now = Date.now();
-
-  if (lastTime) {
-    const delta = (now - lastTime) / 1000; // en secondes
-    recordedNotes.push(["0", delta.toFixed(3)]); // silence
+  if (choix === "flute") {
+    fluteDiv.style.display = "block";
+    pianoDiv.style.display = "none";
+  } else if (choix === "piano") {
+    fluteDiv.style.display = "none";
+    pianoDiv.style.display = "flex";
   }
 
   recordedNotes.push([note, 0.125]); // durée fixe (tu peux adapter)
   lastTime = now;
   console.log(recordedNotes);
-}
+});
 
 // Boutons start/stop
 const startBtn = document.getElementById("start");
@@ -419,41 +433,59 @@ stopBtn.addEventListener("click", () => {
   alert("⏹️ Enregistrement arrêté !");
 });
 
-downloadBtn.addEventListener("click", () => {
-  savePartition(recordedNotes);
+// creation des sons synthé flûte
+let flutesonLike;
+let holesflute;   // Déclaré globalement
+const notesflute = ["C4", "D4", "E4", "F4", "G4", "A4", "B4", "C5"];
+
+document.addEventListener("DOMContentLoaded", () => {
+  // Crée le synthé flûte
+  flutesonLike = new Tone.DuoSynth({
+    voice0: { oscillator: { type: "triangle",detune:10 }, envelope: { attack: 0.4,decay:0.1,sustain:0.7, release: 1.5 } },
+    voice1: { oscillator: { type: "sawtooth",detune:-10 }, envelope: { attack: 0.5,decay:0.1,sustain:0.6, release: 1.5 } },
+    harmonicity: 1.2,
+    volume: -8
+  }).toDestination();
+
+  // Réverb
+  const reverb = new Tone.Reverb({ decay: 4, wet: 0.4 }).toDestination();
+  flutesonLike.connect(reverb);
+
+  
+
+  // Récupère tous les trous
+  holesflute = document.querySelectorAll(".hole");
+
+  // Clic sur chaque trou
+  holesflute.forEach((hole, i) => {
+    hole.addEventListener("click", async () => {
+      await Tone.start();
+      flutesonLike.triggerAttackRelease(notesflute[i], "4n");
+
+      // Illuminer le trou
+      hole.classList.add("active");
+      setTimeout(() => hole.classList.remove("active"), 400);
+    });
+  });
 });
 
-async function savePartition(recordedNotes) {
-  if (!recordedNotes || recordedNotes.length === 0) {
-    alert("Aucune note enregistrée !");
-    return;
-  }
+// 🎹 Jouer avec clavier
+const keyMap = { a:0, z:1, e:2, r:3, t:4, y:5, u:6, i:7 };
 
-  let content = "Unknown 0.125\n";
-  recordedNotes.forEach(([note, duration]) => {
-    content += `${note} ${duration}\n`;
-  });
+document.addEventListener("keydown", async (e) => {
+  const index = keyMap[e.key.toLowerCase()];
+  if (index !== undefined && holesflute) {
+    await Tone.start();
+    flutesonLike.triggerAttackRelease(notesflute[index], "4n");
 
-  if (window.showSaveFilePicker) {
-    try {
-      const handle = await window.showSaveFilePicker({
-        suggestedName: "partition.txt",
-        types: [
-          {
-            description: "Partition musicale",
-            accept: { "text/plain": [".txt"] },
-          },
-        ],
-      });
-      const writable = await handle.createWritable();
-      await writable.write(content);
-      await writable.close();
-      alert("✅ Fichier sauvegardé avec succès !");
-      return;
-    } catch (err) {
-      console.warn("showSaveFilePicker annulé ou non dispo :", err);
+    // Illuminer le trou correspondant
+    const hole = holesflute[index];
+    if (hole) {
+      hole.classList.add("active");
+      setTimeout(() => hole.classList.remove("active"), 400);
     }
   }
+});
 
   const filename =
     prompt("Nom du fichier (ex : partition.txt)", "partition.txt") ||
@@ -472,7 +504,6 @@ async function savePartition(recordedNotes) {
 
   a.remove();
   setTimeout(() => URL.revokeObjectURL(url), 2000);
-}
   URL.revokeObjectURL(url);
 
 speedSelect.addEventListener("change", (e) => {
