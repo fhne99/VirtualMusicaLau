@@ -24,15 +24,15 @@ noteCountBtn.addEventListener('click', async() => {
     for (let i = 0; i < noteCount.value; i++) {
       const note = await getRandomNote();
       if (tempoSelect.value === 'random') {
-        const duration = tempo / 1000;
+        const duration = tempo / 1000; 
         mp.play(note, duration);
-        await new Promise((resolve) => setTimeout(resolve, tempo));
+        await new Promise((resolve) => setTimeout(resolve, tempo)); 
       } else {
         const fixedTempo = parseInt(tempoSelect.value);
         const duration = fixedTempo / 1000;
         mp.play(note, duration);
         await new Promise((resolve) => setTimeout(resolve, fixedTempo));
-      }
+      }  
     }
   } else {
     if (!document.querySelector('#toManyNotesMsg')) {
@@ -97,6 +97,7 @@ Array.from(document.getElementsByClassName("blackButtons")).forEach(
     ];
     btn.addEventListener("click", () => {
       mp.play(notesNoires[i], 1);
+      recordNote(notesNoires[i]);
     });
   }
 );
@@ -137,6 +138,7 @@ document.querySelectorAll(".white-key").forEach((key, i) => {
 
   key.addEventListener("click", () => {
     mp.play(notesBlanches[i], 1);
+    recordNote(notesBlanches[i]);
   });
 });
 
@@ -186,7 +188,7 @@ document.addEventListener("keydown", (event) => {
 
     // Jouer note tenue (pas de durée => null)
     mp.play(note, null);
-
+    recordNote(note);
     highlightKey(note, true);
   }
 });
@@ -419,12 +421,9 @@ stopBtn.addEventListener("click", () => {
   alert("⏹️ Enregistrement arrêté !");
 });
 
+// Télécharger le fichier
 downloadBtn.addEventListener("click", () => {
-  savePartition(recordedNotes);
-});
-
-async function savePartition(recordedNotes) {
-  if (!recordedNotes || recordedNotes.length === 0) {
+  if (recordedNotes.length === 0) {
     alert("Aucune note enregistrée !");
     return;
   }
@@ -434,48 +433,17 @@ async function savePartition(recordedNotes) {
     content += `${note} ${duration}\n`;
   });
 
-  if (window.showSaveFilePicker) {
-    try {
-      const handle = await window.showSaveFilePicker({
-        suggestedName: "partition.txt",
-        types: [
-          {
-            description: "Partition musicale",
-            accept: { "text/plain": [".txt"] },
-          },
-        ],
-      });
-      const writable = await handle.createWritable();
-      await writable.write(content);
-      await writable.close();
-      alert("✅ Fichier sauvegardé avec succès !");
-      return;
-    } catch (err) {
-      console.warn("showSaveFilePicker annulé ou non dispo :", err);
-    }
-  }
-
-  const filename =
-    prompt("Nom du fichier (ex : partition.txt)", "partition.txt") ||
-    "partition.txt";
-
-  const blob = new Blob([content], { type: "text/plain;charset=utf-8" });
+  const blob = new Blob([content], { type: "text/plain" });
   const url = URL.createObjectURL(blob);
 
   const a = document.createElement("a");
   a.href = url;
-  a.download = filename;
-  document.body.appendChild(a);
+  a.download = "partition.txt";
+  a.click();
 
-  const evt = new MouseEvent("click", { bubbles: true, cancelable: true });
-  a.dispatchEvent(evt);
-
-  a.remove();
-  setTimeout(() => URL.revokeObjectURL(url), 2000);
-}
   URL.revokeObjectURL(url);
-
-speedSelect.addEventListener("change", (e) => {
-  playSpeed = parseInt(e.target.value) / 1000;
 });
 
+speedSelect.addEventListener("change", (e) => {
+  playSpeed = parseInt(e.target.value) / 1000; 
+});
