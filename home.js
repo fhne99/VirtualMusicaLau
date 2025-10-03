@@ -24,15 +24,15 @@ noteCountBtn.addEventListener('click', async() => {
     for (let i = 0; i < noteCount.value; i++) {
       const note = await getRandomNote();
       if (tempoSelect.value === 'random') {
-        const duration = tempo / 1000; 
+        const duration = tempo / 1000;
         mp.play(note, duration);
-        await new Promise((resolve) => setTimeout(resolve, tempo)); 
+        await new Promise((resolve) => setTimeout(resolve, tempo));
       } else {
         const fixedTempo = parseInt(tempoSelect.value);
         const duration = fixedTempo / 1000;
         mp.play(note, duration);
         await new Promise((resolve) => setTimeout(resolve, fixedTempo));
-      }  
+      }
     }
   } else {
     if (!document.querySelector('#toManyNotesMsg')) {
@@ -376,4 +376,97 @@ function formatTime(seconds){
     const min = Math.floor(seconds/60);
     const sec = Math.floor(seconds%60);
     return `${min}:${sec.toString().padStart(2,"0")}`;
+}
+// Enregistrement
+let isRecording = false;
+let recordedNotes = [];
+console.log(recordedNotes);
+
+let lastTime = null;
+
+function recordNote(note) {
+  if (!isRecording) return;
+
+  const now = Date.now();
+
+  if (lastTime) {
+    const delta = (now - lastTime) / 1000; // en secondes
+    recordedNotes.push(["0", delta.toFixed(3)]); // silence
+  }
+
+  recordedNotes.push([note, 0.125]); // durée fixe (tu peux adapter)
+  lastTime = now;
+  console.log(recordedNotes);
+}
+
+// Boutons start/stop
+const startBtn = document.getElementById("start");
+const stopBtn = document.getElementById("stop");
+const downloadBtn = document.getElementById("downloadBtn");
+
+startBtn.addEventListener("click", () => {
+  recordedNotes = [];
+  lastTime = null;
+  isRecording = true;
+  alert("🎙️ Enregistrement démarré !");
+});
+
+stopBtn.addEventListener("click", () => {
+  isRecording = false;
+  alert("⏹️ Enregistrement arrêté !");
+});
+
+downloadBtn.addEventListener("click", () => {
+  savePartition(recordedNotes);
+});
+
+async function savePartition(recordedNotes) {
+  if (!recordedNotes || recordedNotes.length === 0) {
+    alert("Aucune note enregistrée !");
+    return;
+  }
+
+  let content = "Unknown 0.125\n";
+  recordedNotes.forEach(([note, duration]) => {
+    content += `${note} ${duration}\n`;
+  });
+
+  if (window.showSaveFilePicker) {
+    try {
+      const handle = await window.showSaveFilePicker({
+        suggestedName: "partition.txt",
+        types: [
+          {
+            description: "Partition musicale",
+            accept: { "text/plain": [".txt"] },
+          },
+        ],
+      });
+      const writable = await handle.createWritable();
+      await writable.write(content);
+      await writable.close();
+      alert("✅ Fichier sauvegardé avec succès !");
+      return;
+    } catch (err) {
+      console.warn("showSaveFilePicker annulé ou non dispo :", err);
+    }
+  }
+
+  const filename =
+    prompt("Nom du fichier (ex : partition.txt)", "partition.txt") ||
+    "partition.txt";
+
+  const blob = new Blob([content], { type: "text/plain;charset=utf-8" });
+  const url = URL.createObjectURL(blob);
+
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = filename;
+  document.body.appendChild(a);
+
+  const evt = new MouseEvent("click", { bubbles: true, cancelable: true });
+  a.dispatchEvent(evt);
+
+  a.remove();
+  setTimeout(() => URL.revokeObjectURL(url), 2000);
 }
