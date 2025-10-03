@@ -185,11 +185,19 @@ document.addEventListener("keydown", (event) => {
   if (note && !activeNotes[event.key]) {
     activeNotes[event.key] = note;
 
-    // Jouer note tenue (pas de durée => null)
     mp.play(note, null);
-    recordNote(note);
-
     highlightKey(note, true);
+
+    if (isRecording) {
+      noteStartTimes[event.key] = Date.now();
+      // Silence éventuel
+      if (lastNoteEnd) {
+        const silence = (Date.now() - lastNoteEnd) / 1000;
+        if (silence > 0.05) {
+          recordedNotes.push(["0", silence.toFixed(3)]);
+        }
+      }
+    }
   }
 });
 
@@ -198,9 +206,43 @@ document.addEventListener("keyup", (event) => {
   if (note) {
     mp.stop(note);
     delete activeNotes[event.key];
-
     highlightKey(note, false);
+
+    if (isRecording && noteStartTimes[event.key]) {
+      const start = noteStartTimes[event.key];
+      const duration = (Date.now() - start) / 1000;
+      recordedNotes.push([note, duration.toFixed(3)]);
+      lastNoteEnd = Date.now();
+      delete noteStartTimes[event.key];
+    }
   }
+});
+
+document.querySelectorAll(".white-key, .blackButtons").forEach((key) => {
+  const note = key.getAttribute("data-note");
+
+  key.addEventListener("mousedown", () => {
+    mp.play(note, null);
+
+    if (isRecording) {
+      noteStartTimes[note] = Date.now();
+      if (lastNoteEnd) {
+        const silence = (Date.now() - lastNoteEnd) / 1000;
+        if (silence > 0.05) recordedNotes.push(["0", silence.toFixed(3)]);
+      }
+    }
+  });
+
+  key.addEventListener("mouseup", () => {
+    mp.stop(note);
+
+    if (isRecording && noteStartTimes[note]) {
+      const duration = (Date.now() - noteStartTimes[note]) / 1000;
+      recordedNotes.push([note, duration.toFixed(3)]);
+      lastNoteEnd = Date.now();
+      delete noteStartTimes[note];
+    }
+  });
 });
 
 // Fonction pour mettre à jour le visuel
@@ -393,6 +435,9 @@ function playTone(freq, startTime, duration) {
 // Enregistrement
 let isRecording = false;
 let recordedNotes = [];
+let noteStartTimes = {}; // Pour suivre début de chaque note
+let lastNoteEnd = null; // Pour calculer les silences
+
 console.log(recordedNotes);
 
 let lastTime = null;
