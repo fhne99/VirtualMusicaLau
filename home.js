@@ -439,20 +439,19 @@ downloadBtn.addEventListener("click", () => {
     return;
   }
 
-  const item = scoreData[index];
-  const freq = NOTE_FREQUENCIES[item.note]?.[0] || SILENCE_FREQUENCY;
+  // Convertir recordedNotes en texte
+  const content = recordedNotes.map((n) => n.join(" ")).join("\n");
 
+  // Créer le fichier et déclencher le téléchargement
   const blob = new Blob([content], { type: "text/plain" });
-  if (freq > 0) playTone(freq, audioContext.currentTime, item.duration);
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = "partition.txt";
+  a.click();
+  URL.revokeObjectURL(url);
 
-  const elapsed = scoreData
-    .slice(0, index)
-    .reduce((sum, i) => sum + i.duration, 0);
-  currentTimeSpan.textContent = formatTime(elapsed);
-  progressBar.value = (elapsed / scoreDuration) * 100;
-
-  currentIndex = index + 1;
-  playTimer = setTimeout(() => playFrom(currentIndex), item.duration * 1000);
+  alert("✅ Partition téléchargée !");
 });
 
 function formatTime(seconds) {
@@ -583,7 +582,7 @@ stopRecBtn.addEventListener("click", async () => {
   const url = URL.createObjectURL(blob);
   const a = document.createElement("a");
   a.href = url;
-  a.download = "partition.txt";
+  a.download = filename;
   a.click();
 
   URL.revokeObjectURL(url);
