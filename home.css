@@ -2,7 +2,39 @@
   display:none;
 }
 
+.button-icon {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 80px;
+  height: 80px;
+  margin: 5px;
+  border: 1px solid #ccc;
+  border-radius: 10px;
+  background-color: #f5f5f5;
+  cursor: pointer;
+  font-family: sans-serif;
+  font-size: 12px;
+  transition: all 0.2s;
+}
 
+.button-icon:hover {
+  background-color: #e0e0e0;
+  transform: scale(1.05);
+}
+
+.button-icon i {
+  font-size: 24px;
+  margin-bottom: 5px;
+}
+
+.button-container {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin-top: 10px;
+}
 
 #importBtn {
   padding: 10px 20px;
@@ -86,4 +118,58 @@
 
 #progressBar::-moz-progress-bar {
   background: #ff6b6b;
+}
+
+.button-row {
+  display: flex;
+  justify-content: center;
+  gap: 40px;
+  margin: 20px 0;
+}
+
+.button-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}
+
+.button-icon {
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  border: none;
+  background: #ff6b6b;
+  color: white;
+  font-size: 22px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: background 0.3s ease, transform 0.2s ease;
+}
+
+.button-icon:hover {
+  background: #ff4b4b;
+  transform: scale(1.08);
+}
+
+.button-icon:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.btn-label {
+  margin-top: 8px;
+  font-size: 14px;
+  color: white;
+}
+
+.section-info {
+  font-size: 25px;
+  color: white;
+  text-align: center;
+  margin-top: 50px;
+  margin-bottom: 25px;
 }
