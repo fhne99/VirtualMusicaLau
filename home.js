@@ -24,15 +24,15 @@ noteCountBtn.addEventListener('click', async() => {
     for (let i = 0; i < noteCount.value; i++) {
       const note = await getRandomNote();
       if (tempoSelect.value === 'random') {
-        const duration = tempo / 1000; 
+        const duration = tempo / 1000;
         mp.play(note, duration);
-        await new Promise((resolve) => setTimeout(resolve, tempo)); 
+        await new Promise((resolve) => setTimeout(resolve, tempo));
       } else {
         const fixedTempo = parseInt(tempoSelect.value);
         const duration = fixedTempo / 1000;
         mp.play(note, duration);
         await new Promise((resolve) => setTimeout(resolve, fixedTempo));
-      }  
+      }
     }
   } else {
     if (!document.querySelector('#toManyNotesMsg')) {
@@ -418,9 +418,12 @@ stopBtn.addEventListener("click", () => {
   alert("⏹️ Enregistrement arrêté !");
 });
 
-// Télécharger le fichier
 downloadBtn.addEventListener("click", () => {
-  if (recordedNotes.length === 0) {
+  savePartition(recordedNotes);
+});
+
+async function savePartition(recordedNotes) {
+  if (!recordedNotes || recordedNotes.length === 0) {
     alert("Aucune note enregistrée !");
     return;
   }
@@ -430,13 +433,42 @@ downloadBtn.addEventListener("click", () => {
     content += `${note} ${duration}\n`;
   });
 
-  const blob = new Blob([content], { type: "text/plain" });
+  if (window.showSaveFilePicker) {
+    try {
+      const handle = await window.showSaveFilePicker({
+        suggestedName: "partition.txt",
+        types: [
+          {
+            description: "Partition musicale",
+            accept: { "text/plain": [".txt"] },
+          },
+        ],
+      });
+      const writable = await handle.createWritable();
+      await writable.write(content);
+      await writable.close();
+      alert("✅ Fichier sauvegardé avec succès !");
+      return;
+    } catch (err) {
+      console.warn("showSaveFilePicker annulé ou non dispo :", err);
+    }
+  }
+
+  const filename =
+    prompt("Nom du fichier (ex : partition.txt)", "partition.txt") ||
+    "partition.txt";
+
+  const blob = new Blob([content], { type: "text/plain;charset=utf-8" });
   const url = URL.createObjectURL(blob);
 
   const a = document.createElement("a");
   a.href = url;
-  a.download = "partition.txt";
-  a.click();
+  a.download = filename;
+  document.body.appendChild(a);
 
-  URL.revokeObjectURL(url);
-});
+  const evt = new MouseEvent("click", { bubbles: true, cancelable: true });
+  a.dispatchEvent(evt);
+
+  a.remove();
+  setTimeout(() => URL.revokeObjectURL(url), 2000);
+}
